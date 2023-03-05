@@ -3,5 +3,6 @@ set -e
 
 source ./bin/setup_ubuntu_ssh
 
-# Import Create Direcory functions
-export PATH=$PATH:$HOME/shellscripts/server_management/bin
+echo 'export PATH=$PATH:$HOME/shellscripts/server_management/bin' >>~/.bashrc
+
+source ~/.bashrc
