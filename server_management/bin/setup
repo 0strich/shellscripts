@@ -2,8 +2,8 @@
 set -e
 
 # Import Create Direcory functions
-source ./create.sh
-source ./install.sh
+source ./create
+source ./install
 
 # Default values for options
 INSTALL_DOCKER=false
