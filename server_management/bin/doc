@@ -4,7 +4,7 @@ set -e
 
 function clean() {
   docker system prune -a -f
-  dockef image prune -a -f
+  docker image prune -a -f
   docker volume prune -f
 }
 
