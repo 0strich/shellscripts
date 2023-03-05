@@ -4,4 +4,4 @@ set -e
 source ./bin/setup_ubuntu_ssh
 
 # Import Create Direcory functions
-export $PATH:$HOME/shellscripts/server_management/bin/create
+export $PATH:$HOME/shellscripts/server_management/bin
