@@ -22,7 +22,7 @@ function usage() {
 }
 
 # Parse options
-while getopts ":dn" opt; do
+while getopts ":dnxm" opt; do
 	case ${opt} in
 	d)
 		INSTALL_DOCKER=true
