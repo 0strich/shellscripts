@@ -21,7 +21,7 @@ function create_project_directory() {
 function clone_nginx() {
 	create_project_directory
 	if [ ! -d "/project/nginx" ]; then
-		cp -r /dockers/nginx /project
+		cp -r /dockers/nginx /project/nginx
 	fi
 }
 
@@ -29,7 +29,7 @@ function clone_nginx() {
 function clone_mongodb() {
 	create_project_directory
 	if [ ! -d "/project/mongodb" ]; then
-		cp -r /dockers/mongodb /project
+		cp -r /dockers/mongodb /project/mongodb
 	fi
 }
 
