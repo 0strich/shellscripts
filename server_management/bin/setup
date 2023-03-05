@@ -31,10 +31,10 @@ while getopts ":dnxm" opt; do
 		INSTALL_NODE=true
 		;;
 	x)
-		INSTALL_NODE=true
+		INSTALL_NGINX=true
 		;;
 	m)
-		INSTALL_NODE=true
+		INSTALL_MONGODB=true
 		;;
 	\?)
 		usage
