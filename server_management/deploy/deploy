@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+# Default values for options
+PROJECT_PATH=/project
+DEPLOY_PROJEC1=false
+
+# Usage information
+function usage() {
+	echo "Usage: $0 [-d]"
+	echo "Options:"
+	echo "  -n  Project Name"
+}
+
+# Parse options
+while getopts ":n" opt; do
+	case ${opt} in
+	n)
+		DEPLOY_PROJECT=true
+		;;
+	\?)
+		usage
+		exit 1
+		;;
+	:)
+		echo "Invalid option: -$OPTARG requires an argument" 1>&2
+		usage
+		exit 1
+		;;
+	esac
+done
+shift $((OPTIND - 1))
+
+# Check if no options are provided
+if $DEPLOY_PROJECT; then
+	echo "Deploying $1..."
+	pushd $PROJECT_PATH/$1
+	git pull
+	ls -al
+	popd
+	echo "Deploying $ Complete."
+fi
+
+# Final message
+echo "Setup complete."

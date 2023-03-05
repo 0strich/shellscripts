@@ -4,5 +4,6 @@ set -e
 source ./bin/setup_ubuntu_ssh
 
 echo 'export PATH=$PATH:$HOME/shellscripts/server_management/bin' >>~/.bashrc
+echo 'export PATH=$PATH:$HOME/shellscripts/server_management/deploy' >>~/.bashrc
 
 source ~/.bashrc
