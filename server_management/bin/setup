@@ -2,8 +2,8 @@
 set -e
 
 # Import Create Direcory functions
-source ./create
-source ./install
+source $HOME/sehllscripts/server_management/bin/create
+source $HOME/sehllscripts/server_management/bin/install
 
 # Default values for options
 INSTALL_DOCKER=false
