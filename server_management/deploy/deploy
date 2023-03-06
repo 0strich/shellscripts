@@ -38,6 +38,8 @@ if $DEPLOY_PROJECT; then
 	git pull
 	ls -al
 	popd
+	ssh vendor
+	docker ps
 	echo "Deploying $ Complete."
 fi
 
