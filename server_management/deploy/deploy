@@ -3,13 +3,48 @@ set -e
 
 # Default values for options
 PROJECT_PATH=/project
-DEPLOY_PROJEC1=false
+PROJECT=$1
+PROJECT_NAME=$2
+DEPLOY_PROJECT=false
 
 # Usage information
 function usage() {
 	echo "Usage: $0 [-d]"
 	echo "Options:"
 	echo "  -n  Project Name"
+}
+
+# 배포 서버에서 프로젝트 서버 접속 및 배포
+function command() {
+	echo "Deploying $PROJECT..."
+
+	# 프로젝트 경로 이동
+	pushd "/$PROJECT_PATH/$PROJECT/$PROJECT_NAME"
+
+	# 업데이트 소스 pull
+	git pull
+
+	# package.json version 제외한 해시 비교(추가/변경 모듈 확인)
+	if [ -e "hash.json" ]; then
+		echo "Compare Hash..."
+		# 저장된 해시값 읽기
+		hash=$(jq -r '.hash' hash.json)
+
+		# 현재 파일의 해시값 계산
+		current_hash=$(cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/\1/')
+
+		# 저장된 해시값과 현재 파일의 해시값 비교(다를경우 npm install)
+		if [ "$hash" == "$current_hash" ]; then
+			echo "Deploy Complete."
+		else
+			echo "Npm Install..."
+			docker exec -t $PROJECT_NAME -node sh -c "npm install"
+			echo "Npm Install Complete."
+		fi
+	else
+		cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
+	fi
+	popd
 }
 
 # Parse options
@@ -31,15 +66,10 @@ while getopts ":n" opt; do
 done
 shift $((OPTIND - 1))
 
-# Check if no options are provided
+# 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	echo "Deploying $1..."
-	pushd $PROJECT_PATH/$1
-	git pull
-	ls -al
-	popd
-	ssh vendor 'docker ps; echo "test"'
-	echo "Deploying $1 Complete."
+	ssh vendor "$(typeset -f command); command \"$PROJECT\" \"$PROJECT_NAME\""
+	echo "Deploying $PROJECT Complete."
 fi
 
 # Final message
