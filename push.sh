@@ -57,7 +57,7 @@ fi
 # main
 git add .
 git commit -m "$1"
-git pusk
+git push
 
 # Final message
 echo "Complete."
