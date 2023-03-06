@@ -2,24 +2,25 @@
 set -e
 
 # Default values for options
-PROJECT_PATH=/project
-PROJECT=$1
-PROJECT_NAME=$2
-DEPLOY_PROJECT=false
+export PROJECT_PATH=/project
+# export 1=$1
+# export 2=$2
+export DEPLOY_PROJECT=false
 
 # Usage information
 function usage() {
-	echo "Usage: $0 [-d]"
+	echo "Usage: $0 [-n]"
 	echo "Options:"
 	echo "  -n  Project Name"
 }
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
-	echo "Deploying $PROJECT..."
+	echo "Deploying $1..."
+	echo "$1"
 
 	# 프로젝트 경로 이동
-	pushd "/$PROJECT_PATH/$PROJECT/$PROJECT_NAME"
+	pushd "/project/$1/$2"
 
 	# 업데이트 소스 pull
 	git pull
@@ -38,10 +39,13 @@ function command() {
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
-			docker exec -t $PROJECT_NAME -node sh -c "npm install"
+			docker exec -t $2 sh -c "npm install"
 			echo "Npm Install Complete."
+			# 새로운 해시값으로 갱신
+			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
 		fi
 	else
+		# hash.json 파일이 없는 경우 새로 생성
 		cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
 	fi
 	popd
@@ -68,8 +72,8 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh vendor "$(typeset -f command); command \"$PROJECT\" \"$PROJECT_NAME\""
-	echo "Deploying $PROJECT Complete."
+	ssh vendor "$(typeset -f command); command \"$1\" \"$2\""
+	echo "Deploying $1 Complete."
 fi
 
 # Final message
