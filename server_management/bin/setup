@@ -6,7 +6,8 @@ MY_PATH=$(dirname $(readlink -f $0))
 INSTALL_DOCKER=false
 INSTALL_NODE=false
 INSTALL_NGINX=false
-INSTALL_MONGODB=false MODIFY_DOCKER_NODE=false
+INSTALL_MONGODB=false
+MODIFY_DOCKER_NODE=false
 MODIFY_DOCKER_REACT=false
 
 # Import Create Direcory functions
@@ -65,7 +66,7 @@ done
 
 # Check if no options are provided
 if
-	! $INSTALL_DOCKER && ! $INSTALL_NODE && ! $INSTALL_NGINX && ! $INSTALL_MONGODB && ! $MODIFY_DOCKER_NODE && ! MODIFY_DOCKER_REACT
+	! $INSTALL_DOCKER && ! $INSTALL_NODE && ! $INSTALL_NGINX && ! $INSTALL_MONGODB && ! $MODIFY_DOCKER_NODE && ! $MODIFY_DOCKER_REACT
 then
 	echo "At least one option is required."
 	usage
