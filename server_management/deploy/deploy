@@ -72,9 +72,9 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh $1 "$(typeset -f command); command \"$2\" \"$3\""
+	ssh $1 "$(typeset -f command); command \"$1\" \"$2\" \"$3\""
 	echo "Deploying $2 Complete."
 fi
 
 # Final message
-echo "Setup complete."
+echo "Deploy Success."
