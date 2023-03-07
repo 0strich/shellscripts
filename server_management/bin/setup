@@ -2,15 +2,14 @@
 set -e
 
 # Import Create Direcory functions
-source $PWD/create
-source $PWD/install
+source $HOME/shellscripts/server_management/bin/create
+source $HOME/shellscripts/server_management/bin/install
 
 # Default values for options
 INSTALL_DOCKER=false
 INSTALL_NODE=false
 INSTALL_NGINX=false
-INSTALL_MONGODB=false
-MODIFY_DOCKER_NODE=false
+INSTALL_MONGODB=false MODIFY_DOCKER_NODE=false
 MODIFY_DOCKER_REACT=false
 
 # Usage information
