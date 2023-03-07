@@ -13,12 +13,12 @@ INSTALL_MONGODB=false
 
 # Usage information
 function usage() {
-	echo "Usage: $0 [--docker] [--nodejs] [--nginx] [--mongodb]"
+	echo "Usage: $0 [-d|--docker] [-n|--nodejs] [-x|--nginx] [-m|--mongodb]"
 	echo "Options:"
-	echo "  --docker  Install Docker"
-	echo "  --nodejs  Install Node.js"
-	echo "  --nginx   Install Nginx"
-	echo "  --mongodb Install MongoDB"
+	echo "  -d, --docker  Install Docker"
+	echo "  -n, --nodejs  Install Node.js"
+	echo "  -x, --nginx   Install Nginx"
+	echo "  -m, --mongodb Install MongoDB"
 }
 
 # Parse options
@@ -26,19 +26,19 @@ while [[ $# -gt 0 ]]; do
 	key="$1"
 
 	case $key in
-	--docker)
+	-d | --docker)
 		INSTALL_DOCKER=true
 		shift # past argument
 		;;
-	--nodejs)
+	-n | --nodejs)
 		INSTALL_NODE=true
 		shift # past argument
 		;;
-	--nginx)
+	-x | --nginx)
 		INSTALL_NGINX=true
 		shift # past argument
 		;;
-	--mongodb)
+	-m | --mongodb)
 		INSTALL_MONGODB=true
 		shift # past argument
 		;;
