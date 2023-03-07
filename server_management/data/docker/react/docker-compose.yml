@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  project-react:
+    image: project-react
+    container_name: project-react
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - VIRTUAL_HOST=project-react.saltmine.io
+      - LETSENCRYPT_HOST=project-react.saltmine.io
+      - LETSENCRYPT_EMAIL=rich@salt-mine.io
+    network_mode: "webproxy"
+    restart: always
+    stdin_open: true

@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  project-node:
+    image: project-node
+    container_name: project-node
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - VIRTUAL_HOST=project-node.saltmine.io
+      - LETSENCRYPT_HOST=project-node.saltmine.io
+      - LETSENCRYPT_EMAIL=rich@salt-mine.io
+      - NODE_ENV=${NODE_ENV}
+      - NODE_APP_INSTANCE=${NODE_APP_INSTANCE}
+    network_mode: "webproxy"
+    restart: always
