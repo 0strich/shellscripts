@@ -13,5 +13,5 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 # 앱 소스 추가
 COPY . .
 
-EXPOSE 80 443 3000
+EXPOSE 80 443 
 CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]
