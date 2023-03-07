@@ -14,6 +14,6 @@ services:
       - LETSENCRYPT_HOST=project-name.saltmine.io
       - LETSENCRYPT_EMAIL=rich@salt-mine.io
       - NODE_ENV=${NODE_ENV}
-      - NODE_APP_INSTANCE=${NODE_APP_INSTANCE
+      - NODE_APP_INSTANCE=${NODE_APP_INSTANCE}
     network_mode: "webproxy"
     restart: always
