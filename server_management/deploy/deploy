@@ -3,8 +3,8 @@ set -e
 
 # Default values for options
 export PROJECT_PATH=/project
-# export 1=$1
-# export 2=$2
+# export 1=$2
+# export 2=$3
 export DEPLOY_PROJECT=false
 
 # Usage information
@@ -16,11 +16,11 @@ function usage() {
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
-	echo "Deploying $1..."
-	echo "$1"
+	echo "Deploying $2..."
+	echo "$2"
 
 	# 프로젝트 경로 이동
-	pushd "/project/$1/$2"
+	pushd "/project/$2/$3"
 
 	# 업데이트 소스 pull
 	git pull
@@ -39,7 +39,7 @@ function command() {
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
-			docker exec -t $2 sh -c "npm install"
+			docker exec -t $3 sh -c "npm install"
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
 			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
@@ -72,8 +72,8 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh vendor "$(typeset -f command); command \"$1\" \"$2\""
-	echo "Deploying $1 Complete."
+	ssh $1 "$(typeset -f command); command \"$2\" \"$3\""
+	echo "Deploying $2 Complete."
 fi
 
 # Final message
