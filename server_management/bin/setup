@@ -1,18 +1,19 @@
 #!/bin/bash
 set -e
 
-# Import Create Direcory functions
-source $HOME/shellscripts/server_management/bin/create
-source $HOME/shellscripts/server_management/bin/install
-
 # Default values for options
+MY_PATH=$(dirname $(readlink -f $0))
 INSTALL_DOCKER=false
 INSTALL_NODE=false
 INSTALL_NGINX=false
 INSTALL_MONGODB=false MODIFY_DOCKER_NODE=false
 MODIFY_DOCKER_REACT=false
 
-# Usage information
+# Import Create Direcory functions
+source $MY_PATH/create
+source $MY_PATH/install
+
+# Usagr information
 function usage() {
 	echo "Usage: $0 [-d|--docker] [-n|--nodejs] [-x|--nginx] [-m|--mongodb] [-dn|--docker_node] [-dr|--docker_react]"
 	echo "Options:"
@@ -90,13 +91,13 @@ if $INSTALL_MONGODB; then
 fi
 
 if $MODIFY_DOCKER_NODE; then
-	cp -r ../data/docker/node/. ./
+	cp -r $MY_PATH/data/docker/node/. ./
 	current_path="$(basename $(pwd))"
 	sed -i "s/project-name/$current_path/g" docker-compose.yml
 fi
 
 if $MODIFY_DOCKER_REACT; then
-	cp -r ../data/docker/react/. ./
+	cp -r $MY_PATH/data/docker/react/. ./
 	current_path="$(basename $(pwd))"
 	sed -i "s/project-name/$current_path/g" docker-compose.yml
 fi
