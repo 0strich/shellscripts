@@ -91,13 +91,13 @@ if $INSTALL_MONGODB; then
 fi
 
 if $MODIFY_DOCKER_NODE; then
-	cp -r $MY_PATH/data/docker/node/. ./
+	cp -r $MY_PATH/../data/docker/node/. ./
 	current_path="$(basename $(pwd))"
 	sed -i "s/project-name/$current_path/g" docker-compose.yml
 fi
 
 if $MODIFY_DOCKER_REACT; then
-	cp -r $MY_PATH/data/docker/react/. ./
+	cp -r $MY_PATH/../data/docker/react/. ./
 	current_path="$(basename $(pwd))"
 	sed -i "s/project-name/$current_path/g" docker-compose.yml
 fi
