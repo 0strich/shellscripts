@@ -65,7 +65,7 @@ done
 
 # Check if no options are provided
 if
-	! $INSTALL_DOCKER && ! $INSTALL_NODE && ! $INSTALL_NGINX && ! $INSTALL_MONGODB && ! $MODIFY_DOCKER_NODE
+	! $INSTALL_DOCKER && ! $INSTALL_NODE && ! $INSTALL_NGINX && ! $INSTALL_MONGODB && ! $MODIFY_DOCKER_NODE && ! MODIFY_DOCKER_REACT
 then
 	echo "At least one option is required."
 	usage
