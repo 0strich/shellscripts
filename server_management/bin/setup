@@ -13,41 +13,43 @@ INSTALL_MONGODB=false
 
 # Usage information
 function usage() {
-	echo "Usage: $0 [-d] [-n] [-x] [-m]"
+	echo "Usage: $0 [--docker] [--nodejs] [--nginx] [--mongodb]"
 	echo "Options:"
-	echo "  -d  Install Docker"
-	echo "  -n  Install Node.js"
-	echo "  -x  Install Nginx"
-	echo "  -m  Install MongoDB"
+	echo "  --docker  Install Docker"
+	echo "  --nodejs  Install Node.js"
+	echo "  --nginx   Install Nginx"
+	echo "  --mongodb Install MongoDB"
 }
 
 # Parse options
-while getopts ":dnxm" opt; do
-	case ${opt} in
-	d)
+while [[ $# -gt 0 ]]; do
+	key="$1"
+
+	case $key in
+	--docker)
 		INSTALL_DOCKER=true
+		shift # past argument
 		;;
-	n)
+	--nodejs)
 		INSTALL_NODE=true
+		shift # past argument
 		;;
-	x)
+	--nginx)
 		INSTALL_NGINX=true
+		shift # past argument
 		;;
-	m)
+	--mongodb)
 		INSTALL_MONGODB=true
+		shift # past argument
 		;;
-	\?)
-		usage
-		exit 1
-		;;
-	:)
-		echo "Invalid option: -$OPTARG requires an argument" 1>&2
+	*)
+		# unknown option
+		echo "Invalid option: $key" 1>&2
 		usage
 		exit 1
 		;;
 	esac
 done
-shift $((OPTIND - 1))
 
 # Check if no options are provided
 if ! $INSTALL_DOCKER && ! $INSTALL_NODE && ! $INSTALL_NPM; then
