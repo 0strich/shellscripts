@@ -2,20 +2,20 @@
 set -e
 
 # # dockers clone
-# if [ ! -d "/dockers" ]; then
-# 	echo "Clone Dockers..."
-# 	pushd /
-# 	git clone https://github.com/0strich/dockers.git
-# 	popd
-# 	echo "Dockers Cloned"
-# fi
+if [ ! -d "/dockers" ]; then
+	echo "Clone Dockers..."
+	pushd /
+	git clone https://github.com/0strich/dockers.git
+	popd
+	echo "Dockers Cloned"
+fi
 
 # 프로젝트 폴더 생성
-# function create_project_directory() {
-# 	if [ ! -d "/project" ]; then
-# 		mkdir /project
-# 	fi
-# }
+function create_project_directory() {
+	if [ ! -d "/project" ]; then
+		mkdir /project
+	fi
+}
 
 # nginx clone
 function clone_nginx() {
