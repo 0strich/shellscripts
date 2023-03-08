@@ -8,6 +8,7 @@ COPY . /app
 
 RUN npm install -g pm2 node-gyp
 RUN npm install
+RUN npm install --save-dev caniuse-lite@latest
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 # 앱 소스 추가
