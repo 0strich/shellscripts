@@ -42,7 +42,9 @@ shift $((OPTIND - 1))
 if $PUSH_NODE || [[ $1 == patch || $1 == minor || $1 == major ]]; then
 	case $1 in
 	patch | minor | major)
-		push $1 "$2"
+		echo 1 $1
+		echo 2 $2
+		# push $1 "$2"
 		;;
 	*)
 		echo "Invalid option: $1" 1>&2
