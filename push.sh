@@ -54,9 +54,10 @@ if $PUSH_NODE || [[ $1 == patch || $1 == minor || $1 == major ]]; then
 	esac
 else
 	# main
-	git add .
-	git commit -m "$1"
-	git push
+	echo 'etst'
+	# git add .
+	# git commit -m "$1"
+	# git push
 fi
 
 # Final message
