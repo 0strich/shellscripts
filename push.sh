@@ -8,17 +8,15 @@ type=$1
 message=$2
 
 push() {
-	npm run $type
+	npm run $1
 	git add .
-	git commit -m "$message"
+	git commit -m "$2"
 	git push
 }
 
 # Usage information
 function usage() {
-	echo "Usage: $0 [-n]"
-	echo "Options:"
-	echo "  -n  Push Node.js"
+	echo "Usage: $0 [-n] patch|minor|major commitmessage"
 }
 
 # Parse options
@@ -41,10 +39,10 @@ done
 shift $((OPTIND - 1))
 
 # Push Node.js
-if $PUSH_NODE; then
+if $PUSH_NODE || [[ $1 == patch || $1 == minor || $1 == major ]]; then
 	case $1 in
 	patch | minor | major)
-		push
+		push $1 "$2"
 		;;
 	*)
 		echo "Invalid option: $1" 1>&2
@@ -52,12 +50,12 @@ if $PUSH_NODE; then
 		exit 1
 		;;
 	esac
+else
+	# main
+	git add .
+	git commit -m "$1"
+	git push
 fi
-
-# main
-git add .
-git commit -m "$1"
-git push
 
 # Final message
 echo "Complete."
