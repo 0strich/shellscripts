@@ -4,9 +4,6 @@ set -e
 # Default values for options
 PUSH_NODE=false
 
-type=$1
-message=$2
-
 push() {
 	npm run $1
 	git add .
@@ -42,9 +39,7 @@ shift $((OPTIND - 1))
 if $PUSH_NODE || [[ $1 == patch || $1 == minor || $1 == major ]]; then
 	case $1 in
 	patch | minor | major)
-		echo 1 $1
-		echo 2 $2
-		# push $1 "$2"
+		push $1 "$2"
 		;;
 	*)
 		echo "Invalid option: $1" 1>&2
@@ -54,10 +49,9 @@ if $PUSH_NODE || [[ $1 == patch || $1 == minor || $1 == major ]]; then
 	esac
 else
 	# main
-	echo 'etst'
-	# git add .
-	# git commit -m "$1"
-	# git push
+	git add .
+	git commit -m "$1"
+	git push
 fi
 
 # Final message
