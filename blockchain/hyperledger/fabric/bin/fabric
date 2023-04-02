@@ -8,7 +8,7 @@ function printHelp() {
 # [v2] 패브릭 네트워크 실행
 function fabricUp() {
   # download 하이퍼레저 패브릭 & docker pull
-  curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.2.2 1.4.9
+  # curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.2.2 1.4.9
 
   cp /Users/patric/chaincode.js /Users/patric/hyperledger/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js
 
