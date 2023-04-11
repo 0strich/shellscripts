@@ -11,7 +11,7 @@ function fabricUp() {
   curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.2.2 1.4.9
 
   if [ -f "~/hyperledger/chaincode-javascript/bin/assetTransfer.js" ]; then
-    cp ~/hyperledger/chaincode-javascript/bin/assetTransfer.js ~/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js
+    cat ~/hyperledger/chaincode-javascript/bin/assetTransfer.js >>~/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js
   fi
 
   # 폴더 이동
