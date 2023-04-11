@@ -20,8 +20,13 @@ function fabricUp() {
   ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-javascript -ccl javascript
 
   # /tmp/crypt 초기화 & 업데이트
-  rm -rf /tmp/crypto/*
-  cp -r ./organizations/* /tmp/crypto
+  if [ -d "/tmp/crypto" ]; then
+    rm -rf /tmp/crypto/*
+    cp -r ./organizations/* /tmp/crypto
+  else
+    mkdir /tmp/crypto
+    cp -r ./organizations/* /tmp/crypto
+  fi
 
   # 환경설정
   export PATH=${PWD}/../bin:$PATH
