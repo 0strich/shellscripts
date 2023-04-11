@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-export PATH=$PATH:~/shellscripts/blockchain/hyperledger/fabric/bin/fabric
-
 echo 'export PATH=$PATH:$HOME/shellscripts/server_management/bin' >>~/.bashrc
 echo 'export PATH=$PATH:$HOME/shellscripts/server_management/deploy' >>~/.bashrc
+echo 'export PATH=$PATH:$HOME/shellscripts/blockchain/hyperledger/fabric/bin/fabric' >>~/.bashrc
 
 source ~/.bashrc
