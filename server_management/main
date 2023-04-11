@@ -5,6 +5,6 @@ source ./bin/setup_ubuntu_ssh
 
 echo 'export PATH=$PATH:$HOME/shellscripts/server_management/bin' >>~/.bashrc
 echo 'export PATH=$PATH:$HOME/shellscripts/server_management/deploy' >>~/.bashrc
-echo 'export PATH=$PATH:$HOME/shellscripts/blockchain/hyperledger/fabric/bin/fabric' >>~/.bashrc
+echo 'export PATH=$PATH:$HOME/shellscripts/blockchain/hyperledger/fabric/bin' >>~/.bashrc
 
 source ~/.bashrc
