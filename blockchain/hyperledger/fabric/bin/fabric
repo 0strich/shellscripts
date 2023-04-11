@@ -10,7 +10,9 @@ function fabricUp() {
   # download 하이퍼레저 패브릭 & docker pull
   curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.2.2 1.4.9
 
-  cp /Users/patric/chaincode.js /Users/patric/hyperledger/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js
+  if [ -f "~/hyperledger/chaincode-javascript/bin/assetTransfer.js" ]; then
+    cp ~/hyperledger/chaincode-javascript/bin/assetTransfer.js ~/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js
+  fi
 
   # 폴더 이동
   pushd fabric-samples/test-network
