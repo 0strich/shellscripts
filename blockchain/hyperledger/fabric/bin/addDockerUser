@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# ref: https://velog.io/@ililil9482/docker-user-생성하기-feat.ubuntu18.04
+
+# 사용자 생성
+adduser hyper
+
+usermod -aG docker hyper
+
+chmod 666 /run/docker.sock
+
+service docker restart
+
+sed i '/sudo/s/$/hyper' /etc/group
