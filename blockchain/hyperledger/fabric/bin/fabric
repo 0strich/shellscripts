@@ -20,8 +20,8 @@ function fabricUp() {
 
   # 테스트넷 실행
   ./network.sh up createChannel -s couchdb
-  ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-javascript -ccl javascript
-  # ./network.sh deployCC -ccn basic -ccp ../asset-transfer-ledger-queries/chaincode-javascript/ -ccl javascript -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
+  # ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-javascript -ccl javascript
+  ./network.sh deployCC -ccn basic -ccp ../asset-transfer-ledger-queries/chaincode-javascript/ -ccl javascript -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
 
   # /tmp/crypt 초기화 & 업데이트
   if [ -d "/tmp/crypto" ]; then
