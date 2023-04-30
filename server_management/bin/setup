@@ -4,6 +4,7 @@ set -e
 # Default values for options
 MY_PATH=$(dirname $(readlink -f $0))
 INSTALL_DOCKER=false
+INSTALL_GO_LANG=false
 INSTALL_NODE=false
 INSTALL_NGINX=false
 INSTALL_MONGODB=false
@@ -16,9 +17,10 @@ source $MY_PATH/install
 
 # Usagr information
 function usage() {
-	echo "Usage: $0 [-d|--docker] [-n|--nodejs] [-x|--nginx] [-m|--mongodb] [-dn|--docker_node] [-dr|--docker_react]"
+	echo "Usage: $0 [-d|--docker] [-n|--nodejs] [-g|--golang] [-x|--nginx] [-m|--mongodb] [-dn|--docker_node] [-dr|--docker_react]"
 	echo "Options:"
 	echo "  -d, --docker  Install Docker"
+	echo "  -g, --golang Install GoLang"
 	echo "  -n, --nodejs  Install Node.js"
 	echo "  -x, --nginx   Install Nginx"
 	echo "  -m, --mongodb Install MongoDB"
@@ -33,6 +35,10 @@ while [[ $# -gt 0 ]]; do
 	case $key in
 	-d | --docker)
 		INSTALL_DOCKER=true
+		shift # past argument
+		;;
+	-g | --golang)
+		INSTALL_GO_LANG=true
 		shift # past argument
 		;;
 	-n | --nodejs)
@@ -75,6 +81,10 @@ fi
 
 if $INSTALL_DOCKER; then
 	install_docker
+fi
+
+if $INSTALL_GO_LANG; then
+	install_golang
 fi
 
 if $INSTALL_NODE; then

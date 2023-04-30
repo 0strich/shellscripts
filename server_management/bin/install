@@ -23,6 +23,15 @@ function install_docker() {
 	echo "Docker installed."
 }
 
+# Install Go Language
+function install_golang() {
+	echo "Installing Go Language..."
+	wget https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
+	sudo tar -C /usr/local -xzf go1.17.2.linux-amd64.tar.gz
+	export PATH=$PATH:/usr/local/go/bin
+	echo "Go Language installed successfully"
+}
+
 function install_nodejs() {
 	echo "Installing Node.js..."
 	curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
