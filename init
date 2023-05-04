@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+MY_PATH=$(dirname $(readlink -f $0))
+
+echo "export PATH=$PATH:$MY_PATH/scripts"
+echo "export PATH=$PATH:/usr/local/go/bin" >>~/.bashrc
+echo "IPFS_PATH=~/.ipfs" >>~/.bashrc
+echo "source ~/.bashrc"

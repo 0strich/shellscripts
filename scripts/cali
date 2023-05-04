@@ -1,0 +1,19 @@
+#!/bin/bash
+
+pushd $HOME/shellscripts/hyperledger/caliper
+
+if [ ! -d "node_modules" ]; then
+	# CLI 설치
+	npm install --only=prod @hyperledger/caliper-cli@0.4.2
+	# SDK 바인딩
+	npx caliper bind --caliper-bind-sut fabric:2.3
+fi
+
+if [ -d "$HOME/shellscripts/hyperledger/workloads/readAsset.js" ]; then
+	cp $HOME/shellscripts/hyperledger/workloads/readAsset.js $HOME/shellscripts/hyperledger/caliper/workload/readAsset.js
+fi
+
+# 커맨드 실행
+npx caliper launch manager --caliper-workspace ./ --caliper-networkconfig networks/networkConfig.yaml --caliper-benchconfig benchmarks/myAssetBenchmark.yaml --caliper-flow-only-test --caliper-fabric-gateway-enabled --caliper-bind-file fabric:2.3
+
+exit

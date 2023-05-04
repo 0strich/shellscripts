@@ -1,0 +1,52 @@
+#
+#    SPDX-License-Identifier: Apache-2.0
+#
+
+## caliper
+/hyperledger/caliper/caliper.log
+/hyperledger/caliper/report.html
+
+## explorer
+/hyperledger/explorer/explorer_1/scripts/bower_components/
+/hyperledger/explorer/explorer_1/webcontent
+
+/hyperledger/explorer/node_modules
+/hyperledger/explorer/app/test/coverage/
+
+/hyperledger/explorer/.idea/*
+/hyperledger/explorer/venv
+/hyperledger/explorer/.vscode
+
+/hyperledger/explorer/est/fabric-samples
+/hyperledger/explorer/tmp/*
+
+/hyperledger/explorer/explorer/logs
+/hyperledger/explorer/.log
+/hyperledger/explorer/log.log
+
+/hyperledger/explorer/fabric-docker-compose-svt/channel-artifacts
+/hyperledger/explorer/fabric-docker-compose-svt/crypto-config
+/hyperledger/explorer/first-network/channel-artifacts/*
+# examples/*
+/hyperledger/explorer/mp/wallet/*
+/hyperledger/explorer/wallet/*
+/hyperledger/explorer/allet/*
+/hyperledger/explorer/*.swp
+# package-lock.json
+/hyperledger/explorer/ssl-certs/*.pem
+/hyperledger/explorer/ssl-certs/*.csr
+/hyperledger/explorer/0
+/hyperledger/explorer/app/test/.nyc_output/
+/hyperledger/explorer/docs/build/
+/hyperledger/explorer/_build
+# _static
+/hyperledger/explorer/_templates
+/hyperledger/explorer/*.DS_Store
+/hyperledger/explorer/crypto-config
+/hyperledger/explorer/**/specs/channel-artifacts
+/hyperledger/explorer/**/specs/configFiles/
+/hyperledger/explorer/**/specs/templates/
+/hyperledger/explorer/**/specs/ytt/
+/hyperledger/explorer/PTE
+/hyperledger/explorer/dist/*
+/hyperledger/explorer/app/persistence/fabric/postgreSQL/db/logfile
