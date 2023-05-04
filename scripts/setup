@@ -12,12 +12,14 @@ INSTALL_MONGODB=false
 INSTALL_IPFS=false
 MODIFY_DOCKER_NODE=false
 MODIFY_DOCKER_REACT=false
+# TOUCH FILES
+TOUCH_AUTHROIZED_KEYS=false
 
 # Import Create Direcory functions
 source $MY_PATH/clone/docker.sh
 source $MY_PATH/bin/install.sh
 
-: Usagr information
+# Usage information
 function usage() {
 	echo "Usage: $0"
 	echo "Options:"
@@ -60,6 +62,9 @@ while [[ $# -gt 0 ]]; do
 		;;
 	-dr | --docker_react)
 		MODIFY_DOCKER_REACT=true
+		;;
+	-ssh)
+		TOUCH_AUTHROIZED_KEYS=true
 		;;
 	*)
 		# unknown option
@@ -106,6 +111,11 @@ if $MODIFY_DOCKER_REACT; then
 	cp -r $MY_PATH/../data/docker/react/. ./
 	current_path="$(basename $(pwd))"
 	sed -i "s/project-name/$current_path/g" docker-compose.yml
+fi
+
+if $TOUCH_AUTHROIZED_KEYS; then
+	touch ~/.ssh/authorized_keys
+	chmod 600 ~/.ssh/authorized_keys
 fi
 
 # Final message

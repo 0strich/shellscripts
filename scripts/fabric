@@ -44,7 +44,7 @@ if [ -d "fabric-samples" ]; then
   if [[ $OSTYPE == "darwin"* ]]; then
     # sed -i '' 's/\BatchTimeout: 2s\b/BatchTimeout: 1s/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
     sed -i '' 's/\MaxMessageCount: 10\b/MaxMessageCount: 500/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    se0 -i '' 's/\AbsoluteMaxBytes: 99 MB\b/AbsoluteMaxBytes: 990 MB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+    sed -i '' 's/\AbsoluteMaxBytes: 99 MB\b/AbsoluteMaxBytes: 990 MB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
     sed -i '' 's/\PreferredMaxBytes: 512 KB\b/PreferredMaxBytes: 5120 KB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
   else
     # sed -i 's/\BatchTimeout: 2s\b/BatchTimeout: 1s/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
@@ -125,7 +125,6 @@ function get_assets() {
 }
 
 if [ "$1" == "init" ]; then
-  echo "testing"
   fabric_init
 elif [ "$1" == "pull" ]; then
   fabric_pull
