@@ -3,26 +3,29 @@ set -e
 
 USER_NAME=hyper
 
-setup -d -n -g
+function fabric_init() {
 
-# 도커 User Add
-adduser $USER_NAME
+	setup -d -n -g
 
-usermod -aG docker $USER_NAME
+	# 도커 User Add
+	adduser $USER_NAME
 
-chmod 666 /run/docker.sock
+	usermod -aG docker $USER_NAME
 
-sed -i "s/\(^sudo.*$\)/&$USER_NAME/" /etc/group
+	chmod 666 /run/docker.sock
 
-service docker restart
+	sed -i "s/\(^sudo.*$\)/&$USER_NAME/" /etc/group
 
-function hyper_commands() {
-	git clone https://github.com/0strich/shellscripts.git
-	source $HOME/shellscripts/init
-}
+	service docker restart
 
-# $USER_NAME 계정 설정
-su - $USER_NAME -c "
+	function hyper_commands() {
+		git clone https://github.com/0strich/shellscripts.git
+		source $HOME/shellscripts/init
+	}
+
+	# $USER_NAME 계정 설정
+	su - $USER_NAME -c "
 	$(declare -f hyper_commands)
 	hyper_commands
 "
+}
