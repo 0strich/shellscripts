@@ -7,3 +7,6 @@ echo "export PATH=$PATH:$MY_PATH/scripts" >>~/.bashrc
 echo "export PATH=$PATH:/usr/local/go/bin" >>~/.bashrc
 # echo "IPFS_PATH=~/.ipfs" >>~/.bashrc
 echo "source ~/.bashrc"
+
+# Reload the current shell to apply changes to PATH
+. ~/.bashrc
