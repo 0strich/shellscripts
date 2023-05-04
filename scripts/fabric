@@ -125,6 +125,7 @@ function get_assets() {
 }
 
 if [ "$1" == "init" ]; then
+  echo "testing"
   fabric_init
 elif [ "$1" == "pull" ]; then
   fabric_pull
