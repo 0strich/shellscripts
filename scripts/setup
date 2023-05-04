@@ -97,8 +97,7 @@ if $INSTALL_MONGODB; then
 fi
 
 if $INSTALL_IPFS; then
-	echo "IPFS"
-	# clone_mongodb
+	install_ipfs
 fi
 
 if $MODIFY_DOCKER_NODE; then
