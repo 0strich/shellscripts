@@ -39,7 +39,7 @@ function usage() {
 }
 
 function option_switch() {
-	$1=true
+	eval "$1"=true
 	shift # past argument
 }
 
