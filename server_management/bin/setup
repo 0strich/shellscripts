@@ -11,23 +11,13 @@ INSTALL_MONGODB=false
 MODIFY_DOCKER_NODE=false
 MODIFY_DOCKER_REACT=false
 
-OPTIONS=(
-	"INSTALL_DOCKER=false"
-	"INSTALL_GO_LANG=false"
-	"INSTALL_NODE=false"
-	"INSTALL_NGINX=false"
-	"INSTALL_MONGODB=false"
-	"MODIFY_DOCKER_NODE=false"
-	"MODIFY_DOCKER_REACT=false"
-)
-
 # Import Create Direcory functions
 source $MY_PATH/create
 source $MY_PATH/install
 
 # Usagr information
 function usage() {
-	echo "Usage: $0 [-d|--docker] [-n|--nodejs] [-g|--golang] [-x|--nginx] [-m|--mongodb] [-dn|--docker_node] [-dr|--docker_react]"
+	echo "Usage: $0"
 	echo "Options:"
 	echo "  -d, --docker  Install Docker"
 	echo "  -g, --golang Install GoLang"
@@ -38,36 +28,32 @@ function usage() {
 	echo "  -dr, --docker_react Copy Docker files and mondify"
 }
 
-function option_switch() {
-	eval "$1"=true
-	shift # past argument
-}
-
 # Parse options
 while [[ $# -gt 0 ]]; do
 	key="$1"
+	shift
 
 	case $key in
 	-d | --docker)
-		option_switch INSTALL_DOCKER
+		INSTALL_DOCKER=true
 		;;
 	-g | --golang)
-		option_switch INSTALL_GO_LANG
+		INSTALL_GO_LANG=true
 		;;
 	-n | --nodejs)
-		option_switch INSTALL_NODE
+		INSTALL_NODE=true
 		;;
 	-x | --nginx)
-		option_switch INSTALL_NGINX
+		INSTALL_NGINX=true
 		;;
 	-m | --mongodb)
-		option_switch INSTALL_MONGODB
+		INSTALL_MONGODB=true
 		;;
 	-dn | --docker_node)
-		option_switch MODIFY_DOCKER_NODE
+		MODIFY_DOCKER_NODE=true
 		;;
 	-dr | --docker_react)
-		option_switch MODIFY_DOCKER_REACT
+		MODIFY_DOCKER_REACT=true
 		;;
 	*)
 		# unknown option
@@ -76,15 +62,6 @@ while [[ $# -gt 0 ]]; do
 		exit 1
 		;;
 	esac
-done
-
-# Check if no options are provided
-FOUND_OPTION=false
-for option in "${OPTIONS[@]}"; do
-	if eval "((\$$option))"; then
-		FOUND_OPTION=true
-		break
-	fi
 done
 
 if $INSTALL_DOCKER; then
