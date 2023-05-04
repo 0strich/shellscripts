@@ -11,6 +11,16 @@ INSTALL_MONGODB=false
 MODIFY_DOCKER_NODE=false
 MODIFY_DOCKER_REACT=false
 
+OPTIONS=(
+	"INSTALL_DOCKER=false"
+	"INSTALL_GO_LANG=false"
+	"INSTALL_NODE=false"
+	"INSTALL_NGINX=false"
+	"INSTALL_MONGODB=false"
+	"MODIFY_DOCKER_NODE=false"
+	"MODIFY_DOCKER_REACT=false"
+)
+
 # Import Create Direcory functions
 source $MY_PATH/create
 source $MY_PATH/install
@@ -28,38 +38,36 @@ function usage() {
 	echo "  -dr, --docker_react Copy Docker files and mondify"
 }
 
+function option_switch() {
+	$1=true
+	shift # past argument
+}
+
 # Parse options
 while [[ $# -gt 0 ]]; do
 	key="$1"
 
 	case $key in
 	-d | --docker)
-		INSTALL_DOCKER=true
-		shift # past argument
+		option_switch INSTALL_DOCKER
 		;;
 	-g | --golang)
-		INSTALL_GO_LANG=true
-		shift # past argument
+		option_switch INSTALL_GO_LANG
 		;;
 	-n | --nodejs)
-		INSTALL_NODE=true
-		shift # past argument
+		option_switch INSTALL_NODE
 		;;
 	-x | --nginx)
-		INSTALL_NGINX=true
-		shift # past argument
+		option_switch INSTALL_NGINX
 		;;
 	-m | --mongodb)
-		INSTALL_MONGODB=true
-		shift # past argument
+		option_switch INSTALL_MONGODB
 		;;
 	-dn | --docker_node)
-		MODIFY_DOCKER_NODE=true
-		shift # past argument
+		option_switch MODIFY_DOCKER_NODE
 		;;
 	-dr | --docker_react)
-		MODIFY_DOCKER_REACT=true
-		shift # past argument
+		option_switch MODIFY_DOCKER_REACT
 		;;
 	*)
 		# unknown option
@@ -71,13 +79,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Check if no options are provided
-if
-	! $INSTALL_DOCKER && ! $INSTALL_GO_LANG && ! $INSTALL_NODE && ! $INSTALL_NGINX && ! $INSTALL_MONGODB && ! $MODIFY_DOCKER_NODE && ! $MODIFY_DOCKER_REACT
-then
-	echo "At least one option is required."
-	usage
-	exit 1
-fi
+FOUND_OPTION=false
+for option in "${OPTIONS[@]}"; do
+	if eval "((\$$option))"; then
+		FOUND_OPTION=true
+		break
+	fi
+done
 
 if $INSTALL_DOCKER; then
 	install_docker
