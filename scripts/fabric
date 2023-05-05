@@ -6,55 +6,57 @@ MY_PATH=$(dirname $(readlink -f $0))
 source $MY_PATH/bin/fabric_init.sh
 
 # 테스트넷 환경변수 및 설정
-if [ -d "fabric-samples" ]; then
-  # test-network 이동
-  pushd fabric-samples/test-network
+function fabric_settings() {
+  if [ -d "fabric-samples" ]; then
+    # test-network 이동
+    pushd fabric-samples/test-network
 
-  # 환경설정
-  export PATH=${PWD}/../bin:$PATH
-  export FABRIC_CFG_PATH=$PWD/../config/
-  # Environment variables for Org1
-  export CORE_PEER_TLS_ENABLED=true
-  export CORE_PEER_LOCALMSPID="Org1MSP"
-  export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-  export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-  export CORE_PEER_ADDRESS=localhost:7051
+    # 환경설정
+    export PATH=${PWD}/../bin:$PATH
+    export FABRIC_CFG_PATH=$PWD/../config/
+    # Environment variables for Org1
+    export CORE_PEER_TLS_ENABLED=true
+    export CORE_PEER_LOCALMSPID="Org1MSP"
+    export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    export CORE_PEER_ADDRESS=localhost:7051
 
-  # custom assets
-  if [ -d "$HOME/shellecripts/hyperledger" ]; then
-    rm -rf "$HOME/fabric-samples/config"
-    cp -r "$HOME/shellecripts/hyperledger/fabric/config" "$HOME/fabric-samples"
+    # custom assets
+    if [ -d "$HOME/shellecripts/hyperledger" ]; then
+      rm -rf "$HOME/fabric-samples/config"
+      cp -r "$HOME/shellecripts/hyperledger/fabric/config" "$HOME/fabric-samples"
 
-    ## JavaScript
-    # rm -rf "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
-    # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-basic/chaincode-javascript/bin/assetTransfer.js" "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
+      ## JavaScript
+      # rm -rf "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
+      # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-basic/chaincode-javascript/bin/assetTransfer.js" "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
 
-    # rm -rf "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
-    # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
+      # rm -rf "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
+      # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
 
-    ## Go
-    # rm -rf "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
-    # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go" "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
+      ## Go
+      # rm -rf "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
+      # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go" "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
 
-    rm -rf "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
-    cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+      rm -rf "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+      cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+    fi
+
+    # config file update
+    if [[ $OSTYPE == "darwin"* ]]; then
+      # sed -i '' 's/\BatchTimeout: 2s\b/BatchTimeout: 1s/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+      sed -i '' 's/\MaxMessageCount: 10\b/MaxMessageCount: 500/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+      sed -i '' 's/\AbsoluteMaxBytes: 99 MB\b/AbsoluteMaxBytes: 990 MB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+      sed -i '' 's/\PreferredMaxBytes: 512 KB\b/PreferredMaxBytes: 5120 KB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+    else
+      # sed -i 's/\BatchTimeout: 2s\b/BatchTimeout: 1s/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+      sed -i 's/\MaxMessageCount: 10\b/MaxMessageCount: 500/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+      sed -i 's/\AbsoluteMaxBytes: 99 MB\b/AbsoluteMaxBytes: 990 MB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+      sed -i 's/\PreferredMaxBytes: 512 KB\b/PreferredMaxBytes: 5120 KB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
+    fi
+
+    popd
   fi
-
-  # config file update
-  if [[ $OSTYPE == "darwin"* ]]; then
-    # sed -i '' 's/\BatchTimeout: 2s\b/BatchTimeout: 1s/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    sed -i '' 's/\MaxMessageCount: 10\b/MaxMessageCount: 500/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    sed -i '' 's/\AbsoluteMaxBytes: 99 MB\b/AbsoluteMaxBytes: 990 MB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    sed -i '' 's/\PreferredMaxBytes: 512 KB\b/PreferredMaxBytes: 5120 KB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-  else
-    # sed -i 's/\BatchTimeout: 2s\b/BatchTimeout: 1s/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    sed -i 's/\MaxMessageCount: 10\b/MaxMessageCount: 500/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    sed -i 's/\AbsoluteMaxBytes: 99 MB\b/AbsoluteMaxBytes: 990 MB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-    sed -i 's/\PreferredMaxBytes: 512 KB\b/PreferredMaxBytes: 5120 KB/g' $HOME/fabric-samples/test-network/configtx/configtx.yaml
-  fi
-
-  popd
-fi
+}
 
 # 설명
 function print_help() {
@@ -133,18 +135,23 @@ function get_assets() {
 }
 
 if [ "$1" == "init" ]; then
+  fabric_settings
   fabric_init
 elif [ "$1" == "pull" ]; then
+  fabric_settings
   fabric_pull
 elif [ "$1" == "up" ]; then
+  fabric_settings
   fabric_up
 elif [ "$1" == "rebuild" ]; then
+  fabric_settings
   fabric_rebuild
 elif [ "$1" == "restart" ]; then
   fabric_restart
 elif [ "$1" == "get" ]; then
+  fabric_settings
   get_assets
 else
-  print_helk
+  print_help
   exit 1
 fi
