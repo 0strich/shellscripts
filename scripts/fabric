@@ -112,6 +112,14 @@ function fabric_rebuild() {
   exit
 }
 
+function fabric_restart() {
+  docker stop $(docker ps -a -q)
+  doc clean
+  rm -rf fabric-samples
+  fabric pull
+  fabric up
+}
+
 # [v2] get access
 function get_assets() {
   # 폴더 이동
@@ -132,9 +140,11 @@ elif [ "$1" == "up" ]; then
   fabric_up
 elif [ "$1" == "rebuild" ]; then
   fabric_rebuild
+elif [ "$1" == "restart" ]; then
+  fabric_restart
 elif [ "$1" == "get" ]; then
   get_assets
 else
-  print_help
+  print_helk
   exit 1
 fi
