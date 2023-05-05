@@ -597,9 +597,20 @@ chaincode:
     # Default level for all loggers within the chaincode container
     level: info
     # Override default level for the 'shim' logger
-    shim: warning
+    # shim: warning
     # Format for the chaincode container logs
     format: "%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}"
+
+    output:
+      file:
+        # 로그 파일 경로
+        path: "/tmp/hyperledger/fabric/logs/fabric.log"
+        # 로그 파일의 최대 크기 (바이트)
+        maxSize: 10m
+        # 로그 파일의 최대 개수
+        maxBackups: 10
+        # 로그 파일의 최대 보존 기간 (일)
+        maxAge: 7d
 
 ###############################################################################
 #
@@ -662,7 +673,7 @@ ledger:
       # cache. Note that CacheSize needs to be a multiple of 32 MB. If it is not a multiple
       # of 32 MB, the peer would round the size to the next multiple of 32 MB.
       # To disable the cache, 0 MB needs to be assigned to the cacheSize.
-      cacheSize: 640
+      cacheSize: 6400
 
   history:
     # enableHistoryDatabase - options are true or false

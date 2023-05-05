@@ -27,6 +27,7 @@ class MyWorkload extends WorkloadModuleBase {
 
     for (let i = 0; i < this.roundArguments.assets; i++) {
       const assetID = `${this.workerIndex}_${i}`;
+      console.log("assetID: ", assetID);
       console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,

@@ -5,6 +5,7 @@
 ## caliper
 /hyperledger/caliper/caliper.log
 /hyperledger/caliper/report.html
+/hyperledger/caliper/node_modules
 
 ## explorer
 /hyperledger/explorer/explorer_1/scripts/bower_components/

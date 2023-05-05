@@ -31,9 +31,7 @@ class MyWorkload extends WorkloadModuleBase {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateAsset",
         invokerIdentity: "User1",
-        // contractArguments: [assetID, "blue"],
-        // contractArguments: [assetID, "blue", "20", "penguin", "500"],
-        contractArguments: [assetID],
+        contractArguments: [assetID, "blue", "20", "penguin", "500"],
         readOnly: false,
       };
 

@@ -122,7 +122,7 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 	}
 
 	asset := &Asset{
-		DocType:        "id",
+		DocType:        "asset",
 		ID:             assetID,
 		// Color:          color,
 		// Size:           size,
@@ -195,13 +195,12 @@ func (t *SimpleChaincode) DeleteAsset(ctx contractapi.TransactionContextInterfac
 }
 
 // TransferAsset transfers an asset by setting a new owner name on the asset
-func (t *SimpleChaincode) TransferAsset(ctx contractapi.TransactionContextInterface, assetID, newOwner string) error {
+func (t *SimpleChaincode) TransferAsset(ctx contractapi.TransactionContextInterface, assetID string) error {
 	asset, err := t.ReadAsset(ctx, assetID)
 	if err != nil {
 		return err
 	}
 
-	// asset.Owner = newOwner
 	assetBytes, err := json.Marshal(asset)
 	if err != nil {
 		return err
@@ -254,7 +253,7 @@ func (t *SimpleChaincode) GetAssetsByRange(ctx contractapi.TransactionContextInt
 // committing peers if the result set has changed between endorsement time and commit time.
 // Therefore, range queries are a safe option for performing update transactions based on query results.
 // Example: GetStateByPartialCompositeKey/RangeQuery
-func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContextInterface, color, newOwner string) error {
+func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContextInterface, color string) error {
 	// Execute a key range query on all keys starting with 'color'
 	coloredAssetResultsIterator, err := ctx.GetStub().GetStateByPartialCompositeKey(index, []string{color})
 	if err != nil {
@@ -279,7 +278,6 @@ func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContex
 			if err != nil {
 				return err
 			}
-			// asset.Owner = newOwner
 			assetBytes, err := json.Marshal(asset)
 			if err != nil {
 				return err
@@ -300,7 +298,7 @@ func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContex
 // Only available on state databases that support rich query (e.g. CouchDB)
 // Example: Parameterized rich query
 func (t *SimpleChaincode) QueryAssetsByOwner(ctx contractapi.TransactionContextInterface, owner string) ([]*Asset, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"id","owner":"%s"}}`, owner)
+	queryString := fmt.Sprintf(`{"selector":{"docType":"asset","owner":"%s"}}`, owner)
 	return getQueryResultForQueryString(ctx, queryString)
 }
 
@@ -436,12 +434,8 @@ func (t *SimpleChaincode) AssetExists(ctx contractapi.TransactionContextInterfac
 // InitLedger creates the initial set of assets in the ledger.
 func (t *SimpleChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	assets := []Asset{
-		{DocType: "id", ID: "asset1"},
-		{DocType: "id", ID: "asset2"},
-		{DocType: "id", ID: "asset3"},
-		{DocType: "id", ID: "asset4"},
-		{DocType: "id", ID: "asset5"},
-		{DocType: "id", ID: "asset6"},
+		{DocType: "asset", ID: "asset1"},
+		{DocType: "asset", ID: "asset2"},
 	}
 
 	for _, asset := range assets {

@@ -27,5 +27,6 @@ test:
       workload:
         module: workload/readAsset.js
         arguments:
-          assets: 40
+          assets: 10
+          # assets: 40
           contractId: basic

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set -e
+
 # execute script path
 MY_PATH=$(dirname $(readlink -f $0))
 
@@ -9,7 +11,7 @@ source $MY_PATH/bin/fabric_init.sh
 function fabric_settings() {
   if [ -d "fabric-samples" ]; then
     # test-network 이동
-    pushd fabric-samples/test-network
+    pushd $HOME/fabric-samples/test-network
 
     # 환경설정
     export PATH=${PWD}/../bin:$PATH
@@ -22,23 +24,17 @@ function fabric_settings() {
     export CORE_PEER_ADDRESS=localhost:7051
 
     # custom assets
-    if [ -d "$HOME/shellecripts/hyperledger" ]; then
+    if [ -d "$HOME/shellscripts/hyperledger" ]; then
       rm -rf "$HOME/fabric-samples/config"
-      cp -r "$HOME/shellecripts/hyperledger/fabric/config" "$HOME/fabric-samples"
+      cp -r "$HOME/shellscripts/hyperledger/fabric/config" "$HOME/fabric-samples"
 
       ## JavaScript
-      # rm -rf "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
-      # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-basic/chaincode-javascript/bin/assetTransfer.js" "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
-
-      # rm -rf "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
-      # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
+      # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-basic/chaincode-javascript/bin/assetTransfer.js" "$HOME/fabric-samples/asset-transfer-basic/chaincode-javascript/lib/assetTransfer.js"
+      # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-javascript/lib/asset_transfer_ledger_chaincode.js"
 
       ## Go
-      # rm -rf "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
-      # cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go" "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
-
-      rm -rf "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
-      cp "$HOME/shellecripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+      # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go" "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
+      cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
     fi
 
     # config file update
@@ -71,12 +67,12 @@ function fabric_pull() {
 # [v2] 패브릭 네트워크 실행
 function fabric_up() {
   # 폴더 이동
-  pushd fabric-samples/test-network
+  pushd $HOME/fabric-samples/test-network
 
   # 테스트넷 실행
   # ./network.sh up createChannel -ca
   # ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
-  ./network.sh up createChannel -ca -s couchdb
+  ./network.sh up createChannel -s couchdb
   ./network.sh deployCC -ccn basic -ccp ../asset-transfer-ledger-queries/chaincode-go -ccl go -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
 
   # /tmp/crypt 초기화 & 업데이트
@@ -94,16 +90,23 @@ function fabric_up() {
   popd
 }
 
+# [v2] 패브릭 네트워크 실행
+function fabric_down() {
+  pushd $HOME/fabric-samples/test-network
+  ./network.sh down
+  popd
+}
+
 # [v2] 패브릭 네트워크 재실행
 function fabric_rebuild() {
   # 폴더 이동
-  pushd fabric-samples/test-network
+  pushd $HOME/fabric-samples/test-network
 
   # 테스트넷 중지
   ./network.sh down
 
   # 업데이트
-  pushd $HOME/shellecripts/hyperledger
+  pushd $HOME/shellscripts/hyperledger
   rm -rf caliper/caliper.log
   git pull
   popd
@@ -117,19 +120,26 @@ function fabric_rebuild() {
 function fabric_restart() {
   docker stop $(docker ps -a -q)
   doc clean
-  sudo rm -rf fabric-samples
+  rm -rf $HOME/fabric-samples
   fabric pull
   fabric up
+}
+
+function fabric_clean() {
+  docker stop $(docker ps -a -q)
+  doc clean
+  rm -rf $HOME/fabric-samples
 }
 
 # [v2] get access
 function get_assets() {
   # 폴더 이동
-  pushd fabric-samples/test-network
+  pushd $HOME/fabric-samples/test-network
 
   # 조회
   # peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
-  peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"asset\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
+  peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"asset\"}, \"use_index\":[\"_design/indexDocType\", \"indexDocDype\"]}"]}'
+  # peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic -c '{"Args":["CreateAsset","asset5"]}'
 
   popd
 }
@@ -138,19 +148,22 @@ if [ "$1" == "init" ]; then
   fabric_settings
   fabric_init
 elif [ "$1" == "pull" ]; then
-  fabric_settings
   fabric_pull
 elif [ "$1" == "up" ]; then
   fabric_settings
   fabric_up
+elif [ "$1" == "down" ]; then
+  fabric_settings
+  fabric_down
+elif [ "$1" == "get" ]; then
+  get_assets
 elif [ "$1" == "rebuild" ]; then
   fabric_settings
   fabric_rebuild
 elif [ "$1" == "restart" ]; then
   fabric_restart
-elif [ "$1" == "get" ]; then
-  fabric_settings
-  get_assets
+elif [ "$1" == "clean" ]; then
+  fabric_clean
 else
   print_help
   exit 1
