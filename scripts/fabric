@@ -115,7 +115,7 @@ function fabric_rebuild() {
 function fabric_restart() {
   docker stop $(docker ps -a -q)
   doc clean
-  rm -rf fabric-samples
+  sudo rm -rf fabric-samples
   fabric pull
   fabric up
 }
