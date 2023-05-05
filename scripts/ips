@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+INTERNAL_IP=$(ifconfig | grep 192 | awk {'print$2'})
+EXTERNAL_IP=$(curl ifconfig.me)
+
+echo "내부 IP: $INTERNAL_IP"
+echo "외부 IP: $EXTERNAL_IP"
