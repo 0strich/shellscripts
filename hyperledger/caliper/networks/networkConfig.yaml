@@ -15,12 +15,9 @@ organizations:
       certificates:
         - name: "User1"
           clientPrivateKey:
-            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/priv_sk"
-            # path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/78c9a1bb68ff5c4faa3ff07e21e50db07ef40976c42bfacf887cd3a689cb2fd4_sk"
+            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/0e35ff95be03d961a5cc29d928df20112d7370fe12a67d9eab802f9ab429ccf6_sk"
           clientSignedCert:
-            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem"
-            # path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem"
+            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem"
     connectionProfile:
       path: "/tmp/crypto/peerOrganizations/org1.example.com/connection-org1.yaml"
-      # path: "/tmp/crypto/peerOrganizations/org1.example.com/connection-org1.yaml"
       discover: true

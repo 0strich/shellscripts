@@ -2,6 +2,18 @@
 
 pushd $HOME/shellscripts/hyperledger/caliper
 
+# 키 업데이트 경로
+PRIVATE_KEY_PATH=/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore
+NEW_FILE_NAME=$(ls $PRIVATE_KEY_PATH | grep '_sk')
+NEW_FILE_PATH=$PRIVATE_KEY_PATH/$NEW_FILE_NAME
+# 키 업데이트
+
+if [[ $OSTYPE == "darwin"* ]]; then
+	sed -i "" "s|$PRIVATE_KEY_PATH/[^/]*_sk|$NEW_FILE_PATH|g" ./networks/networkConfig.yaml
+else
+	sed -i "s|$PRIVATE_KEY_PATH/[^/]*_sk|$NEW_FILE_PATH|g" ./networks/networkConfig.yaml
+fi
+
 if [ ! -d "node_modules" ]; then
 	# CLI 설치
 	npm install --only=prod @hyperledger/caliper-cli@0.4.2
