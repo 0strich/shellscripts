@@ -5,6 +5,7 @@ const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
 class MyWorkload extends WorkloadModuleBase {
   constructor() {
     super();
+    this.assetIds = [];
   }
 
   async initializeWorkloadModule(
@@ -26,26 +27,29 @@ class MyWorkload extends WorkloadModuleBase {
 
     for (let i = 0; i < this.roundArguments.assets; i++) {
       const assetID = `${this.workerIndex}_${i}`;
+      console.log("assetID: ", assetID);
       console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateAsset",
         invokerIdentity: "User1",
-        contractArguments: [assetID, "blue", "20", "penguin", "500"],
+        contractArguments: [assetID],
         readOnly: false,
       };
-
       await this.sutAdapter.sendRequests(request);
+      this.assetIds.push(assetID);
     }
   }
 
   async submitTransaction() {
     const randomId = Math.floor(Math.random() * this.roundArguments.assets);
+    const assetID = this.assetIds[randomId];
+
     const myArgs = {
       contractId: this.roundArguments.contractId,
       contractFunction: "ReadAsset",
       invokerIdentity: "User1",
-      contractArguments: [`${this.workerIndex}_${randomId}`],
+      contractArguments: [assetID],
       readOnly: true,
     };
 
@@ -53,8 +57,7 @@ class MyWorkload extends WorkloadModuleBase {
   }
 
   async cleanupWorkloadModule() {
-    for (let i = 0; i < this.roundArguments.assets; i++) {
-      const assetID = `${this.workerIndex}_${i}`;
+    for (const assetID of this.assetIds) {
       console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,

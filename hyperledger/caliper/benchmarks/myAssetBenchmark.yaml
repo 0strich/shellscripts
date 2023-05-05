@@ -5,6 +5,18 @@ test:
     type: local
     number: 2
   rounds:
+    - label: readAsset
+      description: Read asset benchmark
+      txDuration: 30
+      rateControl:
+        type: fixed-load
+        opts:
+          tps: 1500
+      workload:
+        module: workload/readAsset.js
+        arguments:
+          assets: 40
+          contractId: basic
     # - label: createAsset
     #   description: Create asset benchmark
     #   txDuration: 10
@@ -17,16 +29,3 @@ test:
     #     arguments:
     #       assets: 10
     #       contractId: basic
-    - label: readAsset
-      description: Read asset benchmark
-      txDuration: 30
-      rateControl:
-        type: fixed-load
-        opts:
-          tps: 1500
-      workload:
-        module: workload/readAsset.js
-        arguments:
-          assets: 10
-          # assets: 40
-          contractId: basic

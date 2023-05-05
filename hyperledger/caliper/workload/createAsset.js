@@ -5,17 +5,7 @@ const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
 class MyWorkload extends WorkloadModuleBase {
   constructor() {
     super();
-  }
-
-  async createAsset(assetID) {
-    const request = {
-      contractId: this.roundArguments.contractId,
-      contractFunction: "CreateAsset",
-      invokerIdentity: "User1",
-      contractArguments: [assetID],
-      readOnly: false,
-    };
-    await this.sutAdapter.sendRequests(request);
+    this.assetIds = [];
   }
 
   async initializeWorkloadModule(
@@ -38,27 +28,37 @@ class MyWorkload extends WorkloadModuleBase {
     for (let i = 0; i < this.roundArguments.assets; i++) {
       const assetID = `${this.workerIndex}_${i}`;
       console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
-      await this.createAsset(assetID);
+      const request = {
+        contractId: this.roundArguments.contractId,
+        contractFunction: "CreateAsset",
+        invokerIdentity: "User1",
+        contractArguments: [assetID],
+        readOnly: false,
+      };
+      await this.sutAdapter.sendRequests(request);
       this.assetIds.push(assetID);
     }
   }
 
   async submitTransaction() {
     const randomId = Math.floor(Math.random() * this.roundArguments.assets);
-    const myArgs = {
+    const assetID = this.assetIds[randomId];
+
+    const request = {
       contractId: this.roundArguments.contractId,
-      contractFunction: "ReadAsset",
       invokerIdentity: "User1",
-      contractArguments: [`${this.workerIndex}_${randomId}`],
-      readOnly: true,
+      readOnly: false,
     };
 
-    await this.sutAdapter.sendRequests(myArgs);
+    console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
+    request.contractFunction = "CreateAsset";
+    request.contractArguments = [assetID];
+
+    await this.sutAdapter.sendRequests(request);
   }
 
   async cleanupWorkloadModule() {
-    for (let i = 0; i < this.roundArguments.assets; i++) {
-      const assetID = `${this.workerIndex}_${i}`;
+    for (const assetID of this.assetIds) {
       console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,

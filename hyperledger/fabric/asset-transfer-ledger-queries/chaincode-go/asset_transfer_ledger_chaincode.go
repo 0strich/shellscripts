@@ -80,7 +80,7 @@ import (
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-const index = "color~name"
+const index = "cn"
 
 // SimpleChaincode implements the fabric-contract-api-go programming model
 type SimpleChaincode struct {
@@ -90,10 +90,6 @@ type SimpleChaincode struct {
 type Asset struct {
 	DocType        string `json:"docType"` //docType is used to distinguish the various types of objects in state database
 	ID             string `json:"ID"`      //the field tags are needed to keep case from bouncing around
-	// Color          string `json:"color"`
-	// Size           int    `json:"size"`
-	// Owner          string `json:"owner"`
-	// AppraisedValue int    `json:"appraisedValue"`
 }
 
 // HistoryQueryResult structure used for returning result of history query
@@ -124,10 +120,6 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 	asset := &Asset{
 		DocType:        "asset",
 		ID:             assetID,
-		// Color:          color,
-		// Size:           size,
-		// Owner:          owner,
-		// AppraisedValue: appraisedValue,
 	}
 	assetBytes, err := json.Marshal(asset)
 	if err != nil {

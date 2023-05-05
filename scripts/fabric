@@ -70,7 +70,7 @@ function fabric_up() {
   pushd $HOME/fabric-samples/test-network
 
   # 테스트넷 실행
-  # ./network.sh up createChannel -ca
+  # ./network.sh up createChannel
   # ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
   ./network.sh up createChannel -s couchdb
   ./network.sh deployCC -ccn basic -ccp ../asset-transfer-ledger-queries/chaincode-go -ccl go -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
@@ -156,6 +156,7 @@ elif [ "$1" == "down" ]; then
   fabric_settings
   fabric_down
 elif [ "$1" == "get" ]; then
+  fabric_settings
   get_assets
 elif [ "$1" == "rebuild" ]; then
   fabric_settings
