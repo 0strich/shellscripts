@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# set -e
+
+FILE_NAME=$1
+
+ssh-keygen -t rsa -f $FILE_NAME
