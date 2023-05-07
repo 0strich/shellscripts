@@ -89,7 +89,7 @@ fi
 
 if $INSTALL_NGINX; then
 	clone_nginx
-	source /project/nginx/start.sh
+	. /project/nginx/start.sh
 fi
 
 if $INSTALL_MONGODB; then
