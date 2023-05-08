@@ -34,7 +34,8 @@ function fabric_settings() {
 
       ## Go
       # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go" "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
-      cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+      # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+      cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/did.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
     fi
 
     # config file update
@@ -139,8 +140,10 @@ function get_assets() {
 
   # 조회
   # peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
-  peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"asset\"}, \"use_index\":[\"_design/indexDocType\", \"indexDocDype\"]}"]}'
+  # peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"asset\"}, \"use_index\":[\"_design/indexDocType\", \"indexDocDype\"]}"]}'
+  peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"employee\"}, \"use_index\":[\"_design/indexID\", \"indexID\"]}"]}'
   # peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic -c '{"Args":["CreateAsset","asset5"]}'
+  # peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic -c '{"Args":["CreateEmployee","employee", "emp3", "Jane", "Doe", "jane.doe@example.com", "Project Manager", ""]}'
 
   popd
 }

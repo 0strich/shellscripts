@@ -31,9 +31,18 @@ class MyWorkload extends WorkloadModuleBase {
       console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,
-        contractFunction: "CreateAsset",
+        contractFunction: "CreateEmployee",
         invokerIdentity: "User1",
-        contractArguments: [assetID],
+        // contractArguments: [assetID],
+        contractArguments: [
+          "employee",
+          assetID,
+          "John",
+          "Doe",
+          "john.doe@example.com",
+          "Software Engineer",
+          "",
+        ],
         readOnly: false,
       };
       await this.sutAdapter.sendRequests(request);
@@ -47,7 +56,7 @@ class MyWorkload extends WorkloadModuleBase {
 
     const myArgs = {
       contractId: this.roundArguments.contractId,
-      contractFunction: "ReadAsset",
+      contractFunction: "GetEmployee",
       invokerIdentity: "User1",
       contractArguments: [assetID],
       readOnly: true,
@@ -61,7 +70,7 @@ class MyWorkload extends WorkloadModuleBase {
       console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,
-        contractFunction: "DeleteAsset",
+        contractFunction: "DeleteEmployee",
         invokerIdentity: "User1",
         contractArguments: [assetID],
         readOnly: false,
