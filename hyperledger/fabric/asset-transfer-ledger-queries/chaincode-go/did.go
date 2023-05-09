@@ -1,20 +1,19 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	"io/ioutil"
+	"strings"
 
+	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-KoreanName
-EnglishName
-koreanName
-englishName
-
-
+// Employee 모델 정의
 type Employee struct {
 	DocType 	  string `json:"docType"`
 	ID          string `json:"id"`
@@ -25,35 +24,29 @@ type Employee struct {
 	DID         string `json:"did"`
 }
 
-// Issuer
-
-type EmployeeDID struct {
+// DID Document 모델 정의
+type DIDDocument struct {
 	Context    []string    `json:"@context"`
 	ID         string      `json:"id"`
 	PublicKey  []PublicKey `json:"publicKey"`
 	Service    []Service   `json:"service"`
 }
 
+// PublicKey 모델 정의
 type PublicKey struct {
 	ID           string `json:"id"`
 	Type         string `json:"type"`
 	PublicKeyHex string `json:"publicKeyHex"`
 }
 
-// Verifier
-
-type DIDVerificationResult struct {
-	Verified bool   `json:"verified"`
-	Message  string `json:"message"`
-}
-
+// Service 모델 정의
 type Service struct {
 	ID              string `json:"id"`
 	Type            string `json:"type"`
 	ServiceEndpoint string `json:"serviceEndpoint"`
 }
 
-// DIDChaincode defines chaincode methods
+// DIDChaincode 정의
 type DIDChaincode struct {
 	contractapi.Contract
 }
@@ -66,12 +59,52 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 		{DocType: "employee", ID: "emp2", KoreanName: "Jane", EnglishName: "Doe", Email: "jane.doe@example.com", Designation: "Project Manager", DID: ""},
 	}
 
+	shell := shell.NewShell("localhost:5001")
 	for _, emp := range employees {
+		// generate DID
+		// DID 형식은 did:ipid:CID
+		res, err := shell.Add(strings.NewReader(emp.KoreanName))
+		if err != nil {
+			return fmt.Errorf("failed to generate DID: %v", err)
+		}
+		cid := res
+		did := fmt.Sprintf("did:ipid:%s", cid)
+
+		// save DID document to IPFS
+		// DID Document는 IPFS에 저장
+		didDoc := EmployeeDID{
+			Context: []string{"https://www.w3.org/ns/did/v1", "https://www.w3.org/2018/credentials/v1"},
+			ID:      did,
+			PublicKey: []PublicKey{
+				{
+					ID:           fmt.Sprintf("%s#keys-1", did),
+					Type:         "Ed25519VerificationKey2018",
+					PublicKeyHex: "dummy public key",
+				},
+			},
+			Service: []Service{
+				{
+					ID:              fmt.Sprintf("%s#vcs", did),
+					Type:            "VerifiableCredentialService",
+					ServiceEndpoint: "https://dummy-service-endpoint.com/",
+				},
+			},
+		}
+		didDocJSON, err := json.Marshal(didDoc)
+		if err != nil {
+			return fmt.Errorf("failed to marshal DID document JSON: %v", err)
+		}
+		didDocCID, err := shell.Add(strings.NewReader(string(didDocJSON)))
+		if err != nil {
+			return fmt.Errorf("failed to save DID document to IPFS: %v", err)
+		}
+
+		// save employee data with DID to the ledger
+		emp.DID = fmt.Sprintf("%s#keys-1", did)
 		empJSON, err := json.Marshal(emp)
 		if err != nil {
 			return fmt.Errorf("failed to marshal employee JSON: %v", err)
 		}
-
 		err = ctx.GetStub().PutState(emp.ID, empJSON)
 		if err != nil {
 			return fmt.Errorf("failed to put employee data: %v", err)
@@ -80,6 +113,7 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 
 	return nil
 }
+
 
 func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]*Employee, error) {
 	var employees []*Employee
