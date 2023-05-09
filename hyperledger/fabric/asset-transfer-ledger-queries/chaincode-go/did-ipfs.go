@@ -4,22 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"bytes"
+	"context"
+	"io/ioutil"
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	shell "github.com/ipfs/go-ipfs-api"
 )
-
-KoreanName
-EnglishName
-koreanName
-englishName
-
 
 type Employee struct {
 	DocType 	  string `json:"docType"`
 	ID          string `json:"id"`
-	KoreanName   string `json:"koreanName"`
-	EnglishName    string `json:"englishName"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
 	Email       string `json:"email"`
 	Designation string `json:"designation"`
 	DID         string `json:"did"`
@@ -62,8 +60,8 @@ const didRegistryChaincodeName = "didregistry"
 
 func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	employees := []Employee{
-		{DocType: "employee", ID: "emp1", KoreanName: "John", EnglishName: "Doe", Email: "john.doe@example.com", Designation: "Software Engineer", DID: ""},
-		{DocType: "employee", ID: "emp2", KoreanName: "Jane", EnglishName: "Doe", Email: "jane.doe@example.com", Designation: "Project Manager", DID: ""},
+		{DocType: "employee", ID: "emp1", FirstName: "John", LastName: "Doe", Email: "john.doe@example.com", Designation: "Software Engineer", DID: ""},
+		{DocType: "employee", ID: "emp2", FirstName: "Jane", LastName: "Doe", Email: "jane.doe@example.com", Designation: "Project Manager", DID: ""},
 	}
 
 	for _, emp := range employees {
@@ -113,7 +111,7 @@ func (dcc *DIDChaincode) QueryAssets(ctx contractapi.TransactionContextInterface
 	return getQueryResultForQueryString(ctx, queryString)
 }
 
-func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, koreanName string, englishName string, email string, designation string) error {
+func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, firstName string, lastName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
 		return fmt.Errorf("failed to read from world state: %v", err)
@@ -125,8 +123,8 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	employee := Employee{
 		DocType:     docType,
 		ID:          id,
-		KoreanName:   koreanName,
-		EnglishName:    englishName,
+		FirstName:   firstName,
+		LastName:    lastName,
 		Email:       email,
 		Designation: designation,
 		DID:         "",
@@ -144,7 +142,7 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
-func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string, koreanName string, englishName string, email string, designation string) error {
+func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string, firstName string, lastName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
 		return fmt.Errorf("failed to read from world state: %v", err)
@@ -160,8 +158,8 @@ func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterf
 	}
 
 	employee.DocType = docType
-	employee.KoreanName = koreanName
-	employee.EnglishName = englishName
+	employee.FirstName = firstName
+	employee.LastName = lastName
 	employee.Email = email
 	employee.Designation = designation
 
@@ -235,17 +233,17 @@ func (dcc *DIDChaincode) IssueEmployeeDID(ctx contractapi.TransactionContextInte
 	// DID Document 생성
 	didDocument := EmployeeDID{
 		Context: []string{"https://www.w3.org/ns/did/v1"},
-		ID:      "did:example:" + id,
+		ID:      "did:ipfs:" + id,
 		PublicKey: []PublicKey{
 			{
-				ID:           "did:example:" + id + "#keys-1",
+				ID:           "did:ipfs:" + id + "#keys-1",
 				Type:         "Ed25519VerificationKey2018",
 				PublicKeyHex: "abc123...",
 			},
 		},
 		Service: []Service{
 			{
-				ID:              "did:example:" + id + "#vcs",
+				ID:              "did:ipfs:" + id + "#vcs",
 				Type:            "VerifiableCredentialService",
 				ServiceEndpoint: "https://example.com/vc/",
 			},
@@ -253,6 +251,22 @@ func (dcc *DIDChaincode) IssueEmployeeDID(ctx contractapi.TransactionContextInte
 	}
 
 	didJSON, err := json.Marshal(didDocument)
+	if err != nil {
+		return fmt.Errorf("failed to marshal employee DID JSON: %v", err)
+	}
+
+	// IPFS에 DID Document 저장
+	sh := shell.NewShell("localhost:5001")
+	r := bytes.NewReader(didJSON)
+	cid, err := sh.Add(context.Background(), shell.NewReader(r))
+	if err != nil {
+		return fmt.Errorf("failed to add DID Document to IPFS: %v", err)
+	}
+
+	// DID Document ID를 IPFS 해시값으로 변경
+	didDocument.ID = "did:ipfs:" + cid
+
+	didJSON, err = json.Marshal(didDocument)
 	if err != nil {
 		return fmt.Errorf("failed to marshal employee DID JSON: %v", err)
 	}
@@ -272,38 +286,55 @@ func (dcc *DIDChaincode) IssueEmployeeDID(ctx contractapi.TransactionContextInte
 	return nil
 }
 
+func (v *Verifier) VerifyEmployeeDID(did string) (bool, error) {
+	// IPFS 연결
+	sh := shell.NewShell("localhost:5001")
 
-func (dcc *DIDChaincode) VerifyEmployeeDID(ctx contractapi.TransactionContextInterface, id string, did string) (*DIDVerificationResult, error) {
-	employeeJSON, err := ctx.GetStub().GetState(id)
+	// DID Document 가져오기
+	didBytes, err := sh.Cat(did)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read from world state: %v", err)
-	}
-	if employeeJSON == nil {
-		return &DIDVerificationResult{
-			Verified: false,
-			Message:  fmt.Sprintf("the employee %s does not exist", id),
-		}, nil
+		return false, fmt.Errorf("failed to get DID Document: %v", err)
 	}
 
-	employee := new(Employee)
-	err = json.Unmarshal(employeeJSON, employee)
+	// DID Document 파싱
+	var didDoc map[string]interface{}
+	err = json.Unmarshal(didBytes, &didDoc)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
+		return false, fmt.Errorf("failed to unmarshal DID Document: %v", err)
 	}
 
-	if employee.DID != did {
-		return &DIDVerificationResult{
-			Verified: false,
-			Message:  "DID mismatch",
-		}, nil
+	// 공개키 가져오기
+	publicKeys, ok := didDoc["publicKey"].([]interface{})
+	if !ok {
+		return false, fmt.Errorf("failed to get public keys from DID Document")
 	}
 
-	// TODO: 실제 DID 검증 로직 작성
-	// 여기에서는 임시로 true를 반환하는 방식으로 작성합니다.
-	return &DIDVerificationResult{
-		Verified: true,
-		Message:  "DID verified",
-	}, nil
+	// 공개키로 DID 검증
+	for _, publicKey := range publicKeys {
+		keyMap, ok := publicKey.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// 공개키 타입이 RSA인 경우만 검증
+		keyType, ok := keyMap["type"].(string)
+		if !ok || keyType != "RsaVerificationKey2018" {
+			continue
+		}
+
+		// 공개키 가져오기
+		publicKeyStr, ok := keyMap["publicKeyPem"].(string)
+		if !ok {
+			continue
+		}
+
+		// 공개키로 DID 검증
+		// TODO: 실제 DID 검증 로직 작성
+		// 여기에서는 임시로 true를 반환하는 방식으로 작성합니다.
+		return true, nil
+	}
+
+	return false, nil
 }
 
 func (dcc *DIDChaincode) GetEmployeeDID(ctx contractapi.TransactionContextInterface, id string) (string, error) {

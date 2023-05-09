@@ -26,9 +26,9 @@ function install_docker() {
 # Install Go Language
 function install_golang() {
 	echo "Installing Go Language..."
-	wget https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
-	sudo tar -C /usr/local -xzf go1.17.2.linux-amd64.tar.gz
-	rm -rf go1.17.2.linux-amd64.tar.gz
+	wget https://golang.org/dl/go1.18.linux-amd64.tar.gz
+	sudo tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz
+	rm -rf go1.18.linux-amd64.tar.gz
 	echo "export PATH=$PATH:/usr/local/go/bin" >>~/.bashrc
 	echo "source ~/.bashrc"
 	echo "Go Language installed successfully"
@@ -76,9 +76,8 @@ function install_ipfs() {
 
 	# go-ipfs 설치 & ipfs 명령어 폴더 이동 & 경로 설정
 	wget https://dist.ipfs.io/go-ipfs/v0.6.0/go-ipfs_v0.6.0_linux-amd64.tar.gz
-	tar zxvf go-ipfs_v0.6.0_linux-amd64.tar.gz
 	rm go-ipfs_v0.6.0_linux-amd64.tar.gz
-	mv go-ipfs/ipfs /usr/bin/ipfs
+	sudo mv go-ipfs/ipfs /usr/bin/ipfs
 	rm -rf ./go-ipfs
 	echo "IPFS_PATH=~/.ipfs" >>~/.bashrc
 	echo "source ~/.bashrc"
