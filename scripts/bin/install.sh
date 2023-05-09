@@ -68,9 +68,9 @@ function install_ipfs() {
 	mkdir /project && cd /project
 
 	# go설치 & 압축 해제 & 경로 설정 & 적용
-	wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz
-	sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
-	rm go1.15.2.linux-amd64.tar.gz
+	wget https://golang.org/dl/go1.18.2.linux-amd64.tar.gz
+	sudo tar -C /usr/local -xzf go1.18.2.linux-amd64.tar.gz
+	rm go1.18.2.linux-amd64.tar.gz
 	echo "export PATH=$PATH:/usr/local/go/bin" >>~/.bashrc
 	echo "source ~/.bashrc"
 
