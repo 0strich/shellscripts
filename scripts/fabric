@@ -87,7 +87,7 @@ function fabric_up() {
   fi
 
   # go-ipfs-api 설치
-  pushd asset-transfer-ledger-queries/chaincode-go
+  cd ../asset-transfer-ledger-queries/chaincode-go
   go get github.com/ipfs/go-ipfs-api
 
   # 피어 초기화
