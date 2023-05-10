@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
