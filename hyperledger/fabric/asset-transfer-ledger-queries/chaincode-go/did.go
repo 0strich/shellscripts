@@ -54,6 +54,7 @@ type DIDChaincode struct {
 
 const didRegistryChaincodeName = "didregistry"
 
+// 사원증, 사원증 DID 초기화
 func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	employees := []Employee{
 		{DocType: "employee", ID: "emp1", FirstName: "John", LastName: "Doe", Email: "john.doe@example.com", Designation: "Software Engineer", DID: ""},
@@ -61,6 +62,22 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 	}
 
 	for _, emp := range employees {
+		did := generateDID(emp.ID)
+		emp.DID = did
+
+		// Create EmployeeDID
+		empDID := createEmployeeDID(did)
+
+		empDIDJSON, err := json.Marshal(empDID)
+		if err != nil {
+			return fmt.Errorf("failed to marshal employee DID JSON: %v", err)
+		}
+
+		err = ctx.GetStub().PutState(emp.ID, empDIDJSON)
+		if err != nil {
+			return fmt.Errorf("failed to put employee DID data: %v", err)
+		}
+
 		empJSON, err := json.Marshal(emp)
 		if err != nil {
 			return fmt.Errorf("failed to marshal employee JSON: %v", err)
@@ -73,6 +90,40 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 	}
 
 	return nil
+}
+
+// DID String 생성
+func generateDID(id string) string {
+	return "did:ipid:" + hashString(id)
+}
+
+// DID Hash 생성
+func hashString(str string) string {
+	// TODO: 실제 해싱 알고리즘을 사용하여 문자열 해싱 로직을 작성하세요.
+	// 여기에서는 단순히 입력된 문자열을 반환하는 방식으로 대체합니다.
+	return str
+}
+
+// DID Document 생성
+func createEmployeeDID(did string) EmployeeDID {
+	return EmployeeDID{
+		Context: []string{"https://w3id.org/did/v1"},
+		ID:      did,
+		PublicKey: []PublicKey{
+			{
+				ID:           did + "#keys-1",
+				Type:         "Ed25519VerificationKey2018",
+				PublicKeyHex: "publicKeyHex",
+			},
+		},
+		Service: []Service{
+			{
+				ID:              did + "#vcr",
+				Type:            "VerifiableCredentialRegistry",
+				ServiceEndpoint: "https://example.com/vcr",
+			},
+		},
+	}
 }
 
 func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]*Employee, error) {
@@ -103,10 +154,34 @@ func getQueryResultForQueryString(ctx contractapi.TransactionContextInterface, q
 	return constructQueryResponseFromIterator(resultsIterator)
 }
 
+
+// 사원 정보 조회
 func (dcc *DIDChaincode) QueryAssets(ctx contractapi.TransactionContextInterface, queryString string) ([]*Employee, error) {
 	return getQueryResultForQueryString(ctx, queryString)
 }
 
+// 사원 DID Document 조회
+func (dcc *DIDChaincode) GetDIDDocument(ctx contractapi.TransactionContextInterface, id string) (*EmployeeDID, error) {
+	employeeJSON, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read from world state: %v", err)
+	}
+	if employeeJSON == nil {
+		return nil, fmt.Errorf("the employee %s does not exist", id)
+	}
+
+	employee := new(Employee)
+	err = json.Unmarshal(employeeJSON, employee)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
+	}
+
+	didDocument := createEmployeeDID(employee.DID)
+
+	return &didDocument, nil
+}
+
+// 사원정보 생성
 func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, firstName string, lastName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
@@ -138,6 +213,7 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
+// 사원정보 수정
 func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string, firstName string, lastName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
@@ -172,6 +248,7 @@ func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
+// 사원정보 조회
 func (dcc *DIDChaincode) GetEmployee(ctx contractapi.TransactionContextInterface, id string) (*Employee, error) {
 	employeeJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
@@ -190,6 +267,7 @@ func (dcc *DIDChaincode) GetEmployee(ctx contractapi.TransactionContextInterface
 	return employee, nil
 }
 
+// 사원정보 삭제
 func (dcc *DIDChaincode) DeleteEmployee(ctx contractapi.TransactionContextInterface, id string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
@@ -206,143 +284,6 @@ func (dcc *DIDChaincode) DeleteEmployee(ctx contractapi.TransactionContextInterf
 
 	return nil
 }
-
-
-func (dcc *DIDChaincode) IssueEmployeeDID(ctx contractapi.TransactionContextInterface, id string) error {
-	employeeJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return fmt.Errorf("failed to read from world state: %v", err)
-	}
-	if employeeJSON == nil {
-		return fmt.Errorf("the employee %s does not exist", id)
-	}
-
-	employee := new(Employee)
-	err = json.Unmarshal(employeeJSON, employee)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
-	if employee.DID != "" {
-		return fmt.Errorf("the employee %s already has a DID", id)
-	}
-
-	// DID Document 생성
-	didDocument := EmployeeDID{
-		Context: []string{"https://www.w3.org/ns/did/v1"},
-		ID:      "did:example:" + id,
-		PublicKey: []PublicKey{
-			{
-				ID:           "did:example:" + id + "#keys-1",
-				Type:         "Ed25519VerificationKey2018",
-				PublicKeyHex: "abc123...",
-			},
-		},
-		Service: []Service{
-			{
-				ID:              "did:example:" + id + "#vcs",
-				Type:            "VerifiableCredentialService",
-				ServiceEndpoint: "https://example.com/vc/",
-			},
-		},
-	}
-
-	didJSON, err := json.Marshal(didDocument)
-	if err != nil {
-		return fmt.Errorf("failed to marshal employee DID JSON: %v", err)
-	}
-
-	employee.DID = string(didJSON)
-
-	employeeJSON, err = json.Marshal(employee)
-	if err != nil {
-		return fmt.Errorf("failed to marshal employee JSON: %v", err)
-	}
-
-	err = ctx.GetStub().PutState(id, employeeJSON)
-	if err != nil {
-		return fmt.Errorf("failed to put employee data: %v", err)
-	}
-
-	return nil
-}
-
-
-func (dcc *DIDChaincode) VerifyEmployeeDID(ctx contractapi.TransactionContextInterface, id string, did string) (*DIDVerificationResult, error) {
-	employeeJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read from world state: %v", err)
-	}
-	if employeeJSON == nil {
-		return &DIDVerificationResult{
-			Verified: false,
-			Message:  fmt.Sprintf("the employee %s does not exist", id),
-		}, nil
-	}
-
-	employee := new(Employee)
-	err = json.Unmarshal(employeeJSON, employee)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
-
-	if employee.DID != did {
-		return &DIDVerificationResult{
-			Verified: false,
-			Message:  "DID mismatch",
-		}, nil
-	}
-
-	// TODO: 실제 DID 검증 로직 작성
-	// 여기에서는 임시로 true를 반환하는 방식으로 작성합니다.
-	return &DIDVerificationResult{
-		Verified: true,
-		Message:  "DID verified",
-	}, nil
-}
-
-func (dcc *DIDChaincode) GetEmployeeDID(ctx contractapi.TransactionContextInterface, id string) (string, error) {
-	employeeJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return "", fmt.Errorf("failed to read from world state: %v", err)
-	}
-	if employeeJSON == nil {
-		return "", fmt.Errorf("the employee %s does not exist", id)
-	}
-
-	employee := new(Employee)
-	err = json.Unmarshal(employeeJSON, employee)
-	if err != nil {
-		return "", fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
-
-	return employee.DID, nil
-}
-
-// func (dcc *DIDChaincode) getPublicKeyFromDIDRegistry(ctx contractapi.TransactionContextInterface, did string) (string) {
-// 	result := ctx.GetStub().InvokeChaincode(didRegistryChaincodeName, [][]byte{[]byte("getPublicKey"), []byte(did)}, "")
-// 	// if result.err != nil {
-// 	// 	return "", fmt.Errorf("failed to invoke DID registry chaincode: %v", err)
-// 	// }
-
-// 	// if result.payload == nil {
-// 	// 	return "", fmt.Errorf("the public key for DID %s was not found in the DID registry", did)
-// 	// }
-
-// 	return string(result)
-// }
-
-// func (dcc *DIDChaincode) updatePublicKeyInDIDRegistry(ctx contractapi.TransactionContextInterface, did string, publicKey string) error {
-// 	result := ctx.GetStub().InvokeChaincode(didRegistryChaincodeName, [][]byte{[]byte("updatePublicKey"), []byte(did), []byte(publicKey)}, "")
-// 	// if result.err != nil {
-// 	// 	return fmt.Errorf("failed to invoke DID registry chaincode: %v", err)
-// 	// }
-
-// 	// if result.payload == nil {
-// 	// 	return fmt.Errorf("failed to update the public key for DID %s in the DID registry", did)
-// 	// }
-
-// 	return nil
-// }
 
 func main() {
 	didChaincode, err := contractapi.NewChaincode(&DIDChaincode{})

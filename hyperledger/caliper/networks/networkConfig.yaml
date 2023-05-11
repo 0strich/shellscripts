@@ -15,7 +15,7 @@ organizations:
       certificates:
         - name: "User1"
           clientPrivateKey:
-            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/bd818f61907efd98eb11ae8b41bd9720a842344865ddab4523a23971772ee6c0_sk"
+            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/3990e1652439f36458cca9537bf5cd5c396764df260a343e528c6d375fe47494_sk"
           clientSignedCert:
             path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem"
     connectionProfile:
