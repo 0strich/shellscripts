@@ -36,7 +36,7 @@ function fabric_settings() {
       # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go" "$HOME/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/smartcontract.go"
       # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
       # cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/go.mod" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/go.mod"
-      cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/did.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
+      cp "$HOME/shellscripts/hyperledger/fabric/asset-transfer-ledger-queries/chaincode-go/employee.go" "$HOME/fabric-samples/asset-transfer-ledger-queries/chaincode-go/asset_transfer_ledger_chaincode.go"
     fi
 
     # config file update
