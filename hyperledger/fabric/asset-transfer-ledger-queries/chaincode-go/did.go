@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/hex"
+	"crypto/sha256"
 	"fmt"
 	"log"
 
@@ -12,8 +14,8 @@ import (
 type Employee struct {
 	DocType 	  string `json:"docType"`
 	ID          string `json:"id"`
-	FirstName   string `json:"firstName"`
-	LastName    string `json:"lastName"`
+	KoreanName   string `json:"koreanName"`
+	EnglishName    string `json:"englishName"`
 	Email       string `json:"email"`
 	Designation string `json:"designation"`
 	DID         string `json:"did"`
@@ -57,8 +59,8 @@ const didRegistryChaincodeName = "didregistry"
 // 사원증, 사원증 DID 초기화
 func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	employees := []Employee{
-		{DocType: "employee", ID: "emp1", FirstName: "John", LastName: "Doe", Email: "john.doe@example.com", Designation: "Software Engineer", DID: ""},
-		{DocType: "employee", ID: "emp2", FirstName: "Jane", LastName: "Doe", Email: "jane.doe@example.com", Designation: "Project Manager", DID: ""},
+		{DocType: "employee", ID: "emp1", KoreanName: "aaa", EnglishName: "Olive", Email: "olive@salt-mine.io", Designation: "CEO", DID: ""},
+		{DocType: "employee", ID: "emp2", KoreanName: "bbb", EnglishName: "Austin", Email: "rich@salt-mine.io", Designation: "CTO", DID: ""},
 	}
 
 	for _, emp := range employees {
@@ -99,9 +101,8 @@ func generateDID(id string) string {
 
 // DID Hash 생성
 func hashString(str string) string {
-	// TODO: 실제 해싱 알고리즘을 사용하여 문자열 해싱 로직을 작성하세요.
-	// 여기에서는 단순히 입력된 문자열을 반환하는 방식으로 대체합니다.
-	return str
+	hash := sha256.Sum256([]byte(str))
+	return hex.EncodeToString(hash[:])
 }
 
 // DID Document 생성
@@ -182,7 +183,7 @@ func (dcc *DIDChaincode) GetDIDDocument(ctx contractapi.TransactionContextInterf
 }
 
 // 사원정보 생성
-func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, firstName string, lastName string, email string, designation string) error {
+func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, koreanName string, englishName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
 		return fmt.Errorf("failed to read from world state: %v", err)
@@ -194,8 +195,8 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	employee := Employee{
 		DocType:     docType,
 		ID:          id,
-		FirstName:   firstName,
-		LastName:    lastName,
+		KoreanName:   koreanName,
+		EnglishName:    englishName,
 		Email:       email,
 		Designation: designation,
 		DID:         "",
@@ -214,7 +215,7 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 }
 
 // 사원정보 수정
-func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string, firstName string, lastName string, email string, designation string) error {
+func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string, koreanName string, englishName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
 		return fmt.Errorf("failed to read from world state: %v", err)
@@ -230,8 +231,8 @@ func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterf
 	}
 
 	employee.DocType = docType
-	employee.FirstName = firstName
-	employee.LastName = lastName
+	employee.KoreanName = koreanName
+	employee.EnglishName = englishName
 	employee.Email = email
 	employee.Designation = designation
 
