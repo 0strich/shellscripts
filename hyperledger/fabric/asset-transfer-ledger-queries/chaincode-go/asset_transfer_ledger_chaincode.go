@@ -88,14 +88,14 @@ type SimpleChaincode struct {
 }
 
 type Asset struct {
-	DocType        string `json:"docType"` //docType is used to distinguish the various types of objects in state database
-	ID             string `json:"ID"`      //the field tags are needed to keep case from bouncing around
+	DocType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
+	ID      string `json:"ID"`      //the field tags are needed to keep case from bouncing around
 }
 
 // HistoryQueryResult structure used for returning result of history query
 type HistoryQueryResult struct {
 	Record    *Asset    `json:"record"`
-	TxId     string    `json:"txId"`
+	TxId      string    `json:"txId"`
 	Timestamp time.Time `json:"timestamp"`
 	IsDelete  bool      `json:"isDelete"`
 }
@@ -118,8 +118,8 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 	}
 
 	asset := &Asset{
-		DocType:        "asset",
-		ID:             assetID,
+		DocType: "asset",
+		ID:      assetID,
 	}
 	assetBytes, err := json.Marshal(asset)
 	if err != nil {

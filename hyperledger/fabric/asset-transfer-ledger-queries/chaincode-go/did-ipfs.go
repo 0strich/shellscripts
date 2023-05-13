@@ -8,17 +8,17 @@ import (
 	"io/ioutil"
 	"strings"
 
-	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	shell "github.com/ipfs/go-ipfs-api"
 )
 
 // Employee 모델 정의
 type Employee struct {
-	DocType 	  string `json:"docType"`
+	DocType     string `json:"docType"`
 	ID          string `json:"id"`
-	KoreanName   string `json:"koreanName"`
-	EnglishName    string `json:"englishName"`
+	KoreanName  string `json:"koreanName"`
+	EnglishName string `json:"englishName"`
 	Email       string `json:"email"`
 	Designation string `json:"designation"`
 	DID         string `json:"did"`
@@ -26,10 +26,10 @@ type Employee struct {
 
 // DID Document 모델 정의
 type DIDDocument struct {
-	Context    []string    `json:"@context"`
-	ID         string      `json:"id"`
-	PublicKey  []PublicKey `json:"publicKey"`
-	Service    []Service   `json:"service"`
+	Context   []string    `json:"@context"`
+	ID        string      `json:"id"`
+	PublicKey []PublicKey `json:"publicKey"`
+	Service   []Service   `json:"service"`
 }
 
 // PublicKey 모델 정의
@@ -114,7 +114,6 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 	return nil
 }
 
-
 func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]*Employee, error) {
 	var employees []*Employee
 	for resultsIterator.HasNext() {
@@ -159,8 +158,8 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	employee := Employee{
 		DocType:     docType,
 		ID:          id,
-		KoreanName:   koreanName,
-		EnglishName:    englishName,
+		KoreanName:  koreanName,
+		EnglishName: englishName,
 		Email:       email,
 		Designation: designation,
 		DID:         "",
@@ -178,7 +177,7 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
-func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string, koreanName string, englishName string, email string, designation string) error {
+func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, koreanName string, englishName string, email string, designation string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	if err != nil {
 		return fmt.Errorf("failed to read from world state: %v", err)
@@ -247,7 +246,6 @@ func (dcc *DIDChaincode) DeleteEmployee(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
-
 func (dcc *DIDChaincode) IssueEmployeeDID(ctx contractapi.TransactionContextInterface, id string) error {
 	employeeJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
@@ -305,7 +303,6 @@ func (dcc *DIDChaincode) IssueEmployeeDID(ctx contractapi.TransactionContextInte
 
 	return nil
 }
-
 
 func (dcc *DIDChaincode) VerifyEmployeeDID(ctx contractapi.TransactionContextInterface, id string, did string) (*DIDVerificationResult, error) {
 	employeeJSON, err := ctx.GetStub().GetState(id)

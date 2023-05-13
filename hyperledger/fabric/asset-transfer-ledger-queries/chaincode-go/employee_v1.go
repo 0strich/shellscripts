@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	// "./employee_did"
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 type Employee struct {
-	DocType     string `json:"docType"`
+		DocType     string `json:"docType"`
 	ID          string `json:"id"`
 	KoreanName  string `json:"koreanName"`
 	EnglishName string `json:"englishName"`
@@ -44,6 +45,18 @@ type DIDVerificationResult struct {
 }
 
 type Service struct {
+	ID              string `json:"id"`
+	Type            string `json:"type"`
+	ServiceEndpoint string `json:"serviceEndpoint"`
+}
+
+type Issuer struct {
+	ID           string `json:"id"`
+	Type         string `json:"type"`
+	PublicKeyHex string `json:"publicKeyHex"`
+}
+
+type Verifier struct {
 	ID              string `json:"id"`
 	Type            string `json:"type"`
 	ServiceEndpoint string `json:"serviceEndpoint"`
@@ -283,6 +296,49 @@ func (dcc *DIDChaincode) DeleteEmployee(ctx contractapi.TransactionContextInterf
 	}
 
 	return nil
+}
+
+// Issuer 정보 조회
+func (dcc *DIDChaincode) GetIssuer(ctx contractapi.TransactionContextInterface) (*Issuer, error) {
+	issuer := &Issuer{
+		ID:           "issuer1",
+		Type:         "Ed25519VerificationKey2018",
+		PublicKeyHex: "publicKeyHex",
+	}
+	return issuer, nil
+}
+
+// Verifier 정보 조회
+func (dcc *DIDChaincode) GetVerifier(ctx contractapi.TransactionContextInterface) (*Verifier, error) {
+	verifier := &Verifier{
+		ID:              "verifier1",
+		Type:            "VerifiableCredentialRegistry",
+		ServiceEndpoint: "https://example.com/vcr",
+	}
+	return verifier, nil
+}
+
+// 사원증(DID) 검증
+func (dcc *DIDChaincode) VerifyDID(ctx contractapi.TransactionContextInterface, id string) (*DIDVerificationResult, error) {
+	verifier, err := dcc.GetVerifier(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get verifier: %v", err)
+	}
+
+	employeeDID, err := dcc.GetDIDDocument(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get employee DID: %v", err)
+	}
+
+	// Verifier 정보와 사원증(DID) 정보를 비교하여 검증 수행
+	verified := (verifier.ID == employeeDID.ID && verifier.Type == employeeDID.PublicKey[0].Type)
+
+	result := &DIDVerificationResult{
+		Verified: verified,
+		Message:  "DID verification result",
+	}
+
+	return result, nil
 }
 
 func main() {
