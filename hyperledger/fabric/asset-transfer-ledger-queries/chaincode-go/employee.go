@@ -77,6 +77,55 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 	return nil
 }
 
+func generateRandomEmployeeID() string {
+	employeeIDBytes := make([]byte, 16)
+	rand.Read(employeeIDBytes)
+	return hex.EncodeToString(employeeIDBytes)
+}
+
+func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, employee *Employee) error {
+	employeeJSON, err := json.Marshal(employee)
+	if err != nil {
+		return fmt.Errorf("failed to marshal employee JSON: %v", err)
+	}
+
+	err = ctx.GetStub().PutState(employee.ID, employeeJSON)
+	if err != nil {
+		return fmt.Errorf("failed to put employee data: %v", err)
+	}
+
+	return nil
+}
+
+func (dcc *DIDChaincode) GetEmployee(ctx contractapi.TransactionContextInterface, id string) (*Employee, error) {
+	employeeJSON, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read from world state: %v", err)
+	}
+	if employeeJSON == nil {
+		return nil, fmt.Errorf("the employee %s does not exist", id)
+	}
+
+	employee := new(Employee)
+	err = json.Unmarshal(employeeJSON, employee)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
+	}
+
+	return employee, nil
+}
+
+func (dcc *DIDChaincode) GenerateRandomEmployee(ctx contractapi.TransactionContextInterface) (*Employee, error) {
+	employeeID := generateRandomEmployeeID()
+	employee := &Employee{
+		DocType: "employee",
+		ID:      employeeID,
+		DID:     generateDID(employeeID),
+	}
+	return employee, nil
+}
+
+
 func generateDID(id string) string {
 	return "did:ipid:" + hashString(id)
 }
@@ -181,13 +230,12 @@ func (dcc *DIDChaincode) GetDID(ctx contractapi.TransactionContextInterface, id 
 	return &didDocument, nil
 }
 
-// 사원증(DID) 검증
-func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterface, did string) (*DIDVerificationResult, error) {
-	// 사원 DID Document
-	employeeDID, err := dcc.GetDIDDocument(ctx, did)
+func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterface, id string) (*DIDVerificationResult, error) {
+	// 사원 did document
+	employeeDID, err := dcc.GetDIDDocument(ctx, id)
 	fmt.Println(employeeDID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get employee DID: %v", err)
+		return nil, fmt.Errorf("failed to get employee did: %v", err)
 	}
 
 	// 추가적인 검증 로직 수행
@@ -197,7 +245,7 @@ func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterf
 	verified := true // 임시로 검증 결과를 true로 설정
 	result := &DIDVerificationResult{
 		Verified: verified,
-		Message:  "Employee verification result",
+		Message: "employee verification result",
 	}
 
 	return result, nil

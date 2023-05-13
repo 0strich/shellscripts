@@ -25,58 +25,50 @@ class MyWorkload extends WorkloadModuleBase {
       sutContext
     );
 
-    for (let i = 0; i < this.roundArguments.assets; i++) {
-      const assetID = `${this.workerIndex}_${i}`;
-      console.log("assetID: ", assetID);
-      console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
-      const request = {
-        contractId: this.roundArguments.contractId,
-        contractFunction: "CreateEmployee",
-        invokerIdentity: "User1",
-        // contractArguments: [assetID],
-        contractArguments: [
-          "employee",
-          assetID,
-          "John",
-          "Doe",
-          "john.doe@example.com",
-          "Software Engineer",
-          "",
-        ],
-        readOnly: false,
-      };
-      await this.sutAdapter.sendRequests(request);
-      this.assetIds.push(assetID);
+    const contractId = this.roundArguments.contractId;
+    const noOfAssets = this.roundArguments.assets;
+    const contractFunction = "InitLedger";
+
+    for (let i = 0; i < noOfAssets; i++) {
+      const employeeId = "emp" + i.toString();
+      this.assetIds.push(employeeId);
+      await this.sutAdapter.invokeSmartContract(
+        contractId,
+        contractFunction,
+        { invokerIdentity: "User1" },
+        [employeeId]
+      );
     }
   }
 
   async submitTransaction() {
     const randomId = Math.floor(Math.random() * this.roundArguments.assets);
-    const assetID = this.assetIds[randomId];
+    const employeeId = this.assetIds[randomId];
 
-    const myArgs = {
-      contractId: this.roundArguments.contractId,
-      contractFunction: "GetEmployee",
-      invokerIdentity: "User1",
-      contractArguments: [assetID],
-      readOnly: true,
-    };
+    const contractId = this.roundArguments.contractId;
+    const contractFunction = "GetEmployee"; // 변경: VerifyEmployee에서 GetEmployee로 수정
 
-    await this.sutAdapter.sendRequests(myArgs);
+    const response = await this.sutAdapter.invokeSmartContract(
+      contractId,
+      contractFunction,
+      { invokerIdentity: "User1" },
+      [employeeId]
+    );
+
+    console.log(`GetEmployee response: ${response}`);
   }
 
   async cleanupWorkloadModule() {
-    for (const assetID of this.assetIds) {
-      console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
-      const request = {
-        contractId: this.roundArguments.contractId,
-        contractFunction: "DeleteEmployee",
-        invokerIdentity: "User1",
-        contractArguments: [assetID],
-        readOnly: false,
-      };
+    for (const employeeId of this.assetIds) {
+      const contractId = this.roundArguments.contractId;
+      const contractFunction = "DeleteEmployee";
 
-      await this.sutAdapter.sendRequests(request);
+      await this.sutAdapter.invokeSmartContract(
+        contractId,
+        contractFunction,
+        { invokerIdentity: "User1" },
+        [employeeId]
+      );
     }
   }
 }

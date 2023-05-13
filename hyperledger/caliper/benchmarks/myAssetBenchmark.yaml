@@ -5,6 +5,17 @@ test:
     type: local
     number: 2
   rounds:
+    # - label: verifyEmployee
+    #   description: Verify Employee benchmark
+    #   txDuration: 30
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       tps: 1500
+    #   workload:
+    #     module: workload/verifyEmployee.js
+    #     arguments:
+    #       timeout: 120
     - label: readAsset
       description: Read asset benchmark
       txDuration: 30
@@ -17,15 +28,3 @@ test:
         arguments:
           assets: 40
           contractId: basic
-    # - label: createAsset
-    #   description: Create asset benchmark
-    #   txDuration: 10
-    #   rateControl:
-    #     type: fixed-load
-    #     opts:
-    #       tps: 1500
-    #   workload:
-    #     module: workload/createAsset.js
-    #     arguments:
-    #       assets: 10
-    #       contractId: basic
