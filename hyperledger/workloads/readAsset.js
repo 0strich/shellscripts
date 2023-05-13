@@ -26,30 +26,39 @@ class MyWorkload extends WorkloadModuleBase {
     );
 
     for (let i = 0; i < this.roundArguments.assets; i++) {
-      const employeeID = `${this.workerIndex}_${i}`;
-      console.log("employeeID: ", employeeID);
-      console.log(`Worker ${this.workerIndex}: Creating asset ${employeeID}`);
+      const assetID = `${this.workerIndex}_${i}`;
+      console.log("assetID: ", assetID);
+      console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateEmployee",
         invokerIdentity: "User1",
-        contractArguments: ["employee", employeeID, ""],
+        // contractArguments: [assetID],
+        contractArguments: [
+          "employee",
+          assetID,
+          "John",
+          "Doe",
+          "john.doe@example.com",
+          "Software Engineer",
+          "",
+        ],
         readOnly: false,
       };
       await this.sutAdapter.sendRequests(request);
-      this.assetIds.push(employeeID);
+      this.assetIds.push(assetID);
     }
   }
 
   async submitTransaction() {
     const randomId = Math.floor(Math.random() * this.roundArguments.assets);
-    const employeeID = this.assetIds[randomId];
+    const assetID = this.assetIds[randomId];
 
     const myArgs = {
       contractId: this.roundArguments.contractId,
       contractFunction: "GetEmployee",
       invokerIdentity: "User1",
-      contractArguments: [employeeID],
+      contractArguments: [assetID],
       readOnly: true,
     };
 
@@ -57,13 +66,13 @@ class MyWorkload extends WorkloadModuleBase {
   }
 
   async cleanupWorkloadModule() {
-    for (const employeeID of this.assetIds) {
-      console.log(`Worker ${this.workerIndex}: Deleting asset ${employeeID}`);
+    for (const assetID of this.assetIds) {
+      console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "DeleteEmployee",
         invokerIdentity: "User1",
-        contractArguments: [employeeID],
+        contractArguments: [assetID],
         readOnly: false,
       };
 
