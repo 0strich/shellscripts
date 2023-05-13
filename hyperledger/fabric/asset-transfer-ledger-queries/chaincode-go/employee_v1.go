@@ -13,7 +13,7 @@ import (
 )
 
 type Employee struct {
-		DocType     string `json:"docType"`
+	DocType     string `json:"docType"`
 	ID          string `json:"id"`
 	KoreanName  string `json:"koreanName"`
 	EnglishName string `json:"englishName"`

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -47,7 +48,10 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 		emp.DID = did
 
 		// Create EmployeeDID
-		empDID := createEmployeeDID(did)
+		empDID, err := createEmployeeDID(did)
+		if err != nil {
+			return fmt.Errorf("failed to create employee DID: %v", err)
+		}
 
 		empDIDJSON, err := json.Marshal(empDID)
 		if err != nil {
@@ -82,17 +86,25 @@ func hashString(str string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func createEmployeeDID(did string) EmployeeDID {
+func createEmployeeDID(did string) (EmployeeDID, error) {
+	// Generate public key
+	publicKeyBytes := make([]byte, 32)
+	_, err := rand.Read(publicKeyBytes)
+	if err != nil {
+		return EmployeeDID{}, fmt.Errorf("failed to generate public key: %v", err)
+	}
+	publicKeyHex := hex.EncodeToString(publicKeyBytes)
+
 	return EmployeeDID{
 		ID: did,
 		PublicKey: []PublicKey{
 			{
 				ID:           did + "#keys-1",
 				Type:         "Ed25519VerificationKey2018",
-				PublicKeyHex: "publicKeyHex",
+				PublicKeyHex: publicKeyHex,
 			},
 		},
-	}
+	}, nil
 }
 
 func (dcc *DIDChaincode) GetDIDDocument(ctx contractapi.TransactionContextInterface, id string) (*EmployeeDID, error) {
@@ -110,12 +122,15 @@ func (dcc *DIDChaincode) GetDIDDocument(ctx contractapi.TransactionContextInterf
 		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
 	}
 
-	didDocument := createEmployeeDID(employee.DID)
+	didDocument, err := createEmployeeDID(employee.DID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get employee DID: %v", err)
+	}
 
 	return &didDocument, nil
 }
 
-// 사원정보 조회
+// 사원정보
 func (dcc *DIDChaincode) QueryAssets(ctx contractapi.TransactionContextInterface, queryString string) ([]*Employee, error) {
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
@@ -142,7 +157,7 @@ func (dcc *DIDChaincode) QueryAssets(ctx contractapi.TransactionContextInterface
 	return employees, nil
 }
 
-// DID 정보 조회
+// DID 정보
 func (dcc *DIDChaincode) GetDID(ctx contractapi.TransactionContextInterface, id string) (*EmployeeDID, error) {
 	employeeJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
@@ -158,18 +173,22 @@ func (dcc *DIDChaincode) GetDID(ctx contractapi.TransactionContextInterface, id 
 		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
 	}
 
-	didDocument := createEmployeeDID(employee.DID)
+	didDocument, err := createEmployeeDID(employee.DID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get employee DID: %v", err)
+	}
 
 	return &didDocument, nil
 }
 
 // 사원증(DID) 검증
 func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterface, did string) (*DIDVerificationResult, error) {
-	// 사원 DID Document 조회
-	// employeeDID, err := dcc.GetDIDDocument(ctx, did)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to get employee DID: %v", err)
-	// }
+	// 사원 DID Document
+	employeeDID, err := dcc.GetDIDDocument(ctx, did)
+	fmt.Println(employeeDID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get employee DID: %v", err)
+	}
 
 	// 추가적인 검증 로직 수행
 	// ...
