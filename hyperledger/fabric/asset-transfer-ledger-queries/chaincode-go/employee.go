@@ -83,13 +83,57 @@ func generateRandomEmployeeID() string {
 	return hex.EncodeToString(employeeIDBytes)
 }
 
-func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, employee *Employee) error {
+
+func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string) error {
+	existingData, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return fmt.Errorf("failed to read from world state: %v", err)
+	}
+	if existingData != nil {
+		return fmt.Errorf("the employee %s already exists", id)
+	}
+
+	employee := Employee{
+		DocType:     docType,
+		ID:          id,
+		DID:         "",
+	}
 	employeeJSON, err := json.Marshal(employee)
 	if err != nil {
 		return fmt.Errorf("failed to marshal employee JSON: %v", err)
 	}
 
-	err = ctx.GetStub().PutState(employee.ID, employeeJSON)
+	err = ctx.GetStub().PutState(id, employeeJSON)
+	if err != nil {
+		return fmt.Errorf("failed to put employee data: %v", err)
+	}
+
+	return nil
+}
+
+func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string) error {
+	existingData, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return fmt.Errorf("failed to read from world state: %v", err)
+	}
+	if existingData == nil {
+		return fmt.Errorf("the employee %s does not exist", id)
+	}
+
+	employee := Employee{}
+	err = json.Unmarshal(existingData, &employee)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal employee JSON: %v", err)
+	}
+
+	employee.DocType = docType
+
+	employeeJSON, err := json.Marshal(employee)
+	if err != nil {
+		return fmt.Errorf("failed to marshal employee JSON: %v", err)
+	}
+
+	err = ctx.GetStub().PutState(id, employeeJSON)
 	if err != nil {
 		return fmt.Errorf("failed to put employee data: %v", err)
 	}
@@ -113,6 +157,23 @@ func (dcc *DIDChaincode) GetEmployee(ctx contractapi.TransactionContextInterface
 	}
 
 	return employee, nil
+}
+
+func (dcc *DIDChaincode) DeleteEmployee(ctx contractapi.TransactionContextInterface, id string) error {
+	existingData, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return fmt.Errorf("failed to read from world state: %v", err)
+	}
+	if existingData == nil {
+		return fmt.Errorf("the employee %s does not exist", id)
+	}
+
+	err = ctx.GetStub().DelState(id)
+	if err != nil {
+		return fmt.Errorf("failed to delete employee data: %v", err)
+	}
+
+	return nil
 }
 
 func (dcc *DIDChaincode) GenerateRandomEmployee(ctx contractapi.TransactionContextInterface) (*Employee, error) {

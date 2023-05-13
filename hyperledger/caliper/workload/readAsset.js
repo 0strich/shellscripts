@@ -33,16 +33,7 @@ class MyWorkload extends WorkloadModuleBase {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateEmployee",
         invokerIdentity: "User1",
-        // contractArguments: [assetID],
-        contractArguments: [
-          "employee",
-          assetID,
-          "John",
-          "Doe",
-          "john.doe@example.com",
-          "Software Engineer",
-          "",
-        ],
+        contractArguments: ["employee", assetID, ""],
         readOnly: false,
       };
       await this.sutAdapter.sendRequests(request);
