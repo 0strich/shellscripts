@@ -37,41 +37,41 @@ type DIDChaincode struct {
 	contractapi.Contract
 }
 
+// 에러 핸들
+func checkError(err error) {
+	if err != nil {
+		fmt.Errorf("error occurred %v", err)
+	}
+}
+
+// 원장 초기화
 func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	employees := []Employee{
 		{DocType: "employee", ID: "emp1", DID: ""},
 		{DocType: "employee", ID: "emp2", DID: ""},
 	}
 
-	for _, emp := range employees {
-		did := generateDID(emp.ID)
-		emp.DID = did
+	for _, employee := range employees {
+		// DID 생성
+		did := generateDID(employee.ID)
+		employee.DID = did
 
-		// Create EmployeeDID
-		empDID, err := createEmployeeDID(did)
-		if err != nil {
-			return fmt.Errorf("failed to create employee DID: %v", err)
-		}
+		// DID Document 생성 및 저장
+		employeeDIDDocument, err := createEmployeeDIDDocument(did)
+		checkError(err)
 
-		empDIDJSON, err := json.Marshal(empDID)
-		if err != nil {
-			return fmt.Errorf("failed to marshal employee DID JSON: %v", err)
-		}
+		employeeDIDDocumentJSON, err := json.Marshal(employeeDIDDocument)
+		checkError(err)
 
-		err = ctx.GetStub().PutState(emp.ID, empDIDJSON)
-		if err != nil {
-			return fmt.Errorf("failed to put employee DID data: %v", err)
-		}
+		err = ctx.GetStub().PutState(employee.ID, employeeDIDDocumentJSON)
+		checkError(err)
 
-		empJSON, err := json.Marshal(emp)
-		if err != nil {
-			return fmt.Errorf("failed to marshal employee JSON: %v", err)
-		}
+		// 사원정보 저장
+		employeeJSON, err := json.Marshal(employee)
+		checkError(err)
 
-		err = ctx.GetStub().PutState(emp.ID, empJSON)
-		if err != nil {
-			return fmt.Errorf("failed to put employee data: %v", err)
-		}
+		err = ctx.GetStub().PutState(employee.ID, employeeJSON)
+		checkError(err)
 	}
 
 	return nil
@@ -83,99 +83,95 @@ func generateRandomEmployeeID() string {
 	return hex.EncodeToString(employeeIDBytes)
 }
 
-
 func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string) error {
+	// 존재 유무 체크
 	existingData, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return fmt.Errorf("failed to read from world state: %v", err)
-	}
+	checkError(err)
 	if existingData != nil {
 		return fmt.Errorf("the employee %s already exists", id)
 	}
 
+	// 사원 정보
 	employee := Employee{
-		DocType:     docType,
-		ID:          id,
-		DID:         "",
-	}
-	employeeJSON, err := json.Marshal(employee)
-	if err != nil {
-		return fmt.Errorf("failed to marshal employee JSON: %v", err)
+		DocType: docType,
+		ID:      id,
+		DID:     "",
 	}
 
-	err = ctx.GetStub().PutState(id, employeeJSON)
-	if err != nil {
-		return fmt.Errorf("failed to put employee data: %v", err)
-	}
+	// DID 생성
+	did := generateDID(employee.ID)
+	employee.DID = did
+
+	// DID Document 생성 및 저장
+	employeeDIDDocument, err := createEmployeeDIDDocument(did)
+	checkError(err)
+
+	employeeDIDDocumentJSON, err := json.Marshal(employeeDIDDocument)
+	checkError(err)
+
+	err = ctx.GetStub().PutState(employee.ID, employeeDIDDocumentJSON)
+	checkError(err)
+
+	// 사원정보 저장
+	employeeJSON, err := json.Marshal(employee)
+	checkError(err)
+
+	err = ctx.GetStub().PutState(employee.ID, employeeJSON)
+	checkError(err)
 
 	return nil
 }
 
-func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string,id string) error {
+func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string) error {
 	existingData, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return fmt.Errorf("failed to read from world state: %v", err)
-	}
+	checkError(err)
 	if existingData == nil {
 		return fmt.Errorf("the employee %s does not exist", id)
 	}
 
 	employee := Employee{}
 	err = json.Unmarshal(existingData, &employee)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
+	checkError(err)
 
 	employee.DocType = docType
 
 	employeeJSON, err := json.Marshal(employee)
-	if err != nil {
-		return fmt.Errorf("failed to marshal employee JSON: %v", err)
-	}
+	checkError(err)
 
 	err = ctx.GetStub().PutState(id, employeeJSON)
-	if err != nil {
-		return fmt.Errorf("failed to put employee data: %v", err)
-	}
+	checkError(err)
 
 	return nil
 }
 
 func (dcc *DIDChaincode) GetEmployee(ctx contractapi.TransactionContextInterface, id string) (*Employee, error) {
 	employeeJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read from world state: %v", err)
-	}
+	checkError(err)
 	if employeeJSON == nil {
 		return nil, fmt.Errorf("the employee %s does not exist", id)
 	}
 
 	employee := new(Employee)
 	err = json.Unmarshal(employeeJSON, employee)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
+	checkError(err)
 
 	return employee, nil
 }
 
 func (dcc *DIDChaincode) DeleteEmployee(ctx contractapi.TransactionContextInterface, id string) error {
 	existingData, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return fmt.Errorf("failed to read from world state: %v", err)
-	}
+	checkError(err)
 	if existingData == nil {
 		return fmt.Errorf("the employee %s does not exist", id)
 	}
 
 	err = ctx.GetStub().DelState(id)
-	if err != nil {
-		return fmt.Errorf("failed to delete employee data: %v", err)
-	}
+	checkError(err)
 
 	return nil
 }
 
+// 랜덤 사원
 func (dcc *DIDChaincode) GenerateRandomEmployee(ctx contractapi.TransactionContextInterface) (*Employee, error) {
 	employeeID := generateRandomEmployeeID()
 	employee := &Employee{
@@ -186,23 +182,16 @@ func (dcc *DIDChaincode) GenerateRandomEmployee(ctx contractapi.TransactionConte
 	return employee, nil
 }
 
-
 func generateDID(id string) string {
-	return "did:ipid:" + hashString(id)
+	hash := sha256.Sum256([]byte(id))
+	return "did:ipid:" + hex.EncodeToString(hash[:])
 }
 
-func hashString(str string) string {
-	hash := sha256.Sum256([]byte(str))
-	return hex.EncodeToString(hash[:])
-}
-
-func createEmployeeDID(did string) (EmployeeDID, error) {
+func createEmployeeDIDDocument(did string) (EmployeeDID, error) {
 	// Generate public key
 	publicKeyBytes := make([]byte, 32)
 	_, err := rand.Read(publicKeyBytes)
-	if err != nil {
-		return EmployeeDID{}, fmt.Errorf("failed to generate public key: %v", err)
-	}
+	checkError(err)
 	publicKeyHex := hex.EncodeToString(publicKeyBytes)
 
 	return EmployeeDID{
@@ -219,47 +208,35 @@ func createEmployeeDID(did string) (EmployeeDID, error) {
 
 func (dcc *DIDChaincode) GetDIDDocument(ctx contractapi.TransactionContextInterface, id string) (*EmployeeDID, error) {
 	employeeJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read from world state: %v", err)
-	}
+	checkError(err)
 	if employeeJSON == nil {
 		return nil, fmt.Errorf("the employee %s does not exist", id)
 	}
 
 	employee := new(Employee)
 	err = json.Unmarshal(employeeJSON, employee)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
+	checkError(err)
 
-	didDocument, err := createEmployeeDID(employee.DID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get employee DID: %v", err)
-	}
+	didDocument, err := createEmployeeDIDDocument(employee.DID)
+	checkError(err)
 
 	return &didDocument, nil
 }
 
-// 사원정보
+// 사원정보 조회
 func (dcc *DIDChaincode) QueryAssets(ctx contractapi.TransactionContextInterface, queryString string) ([]*Employee, error) {
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get query result: %v", err)
-	}
+	checkError(err)
 	defer resultsIterator.Close()
 
 	var employees []*Employee
 	for resultsIterator.HasNext() {
 		result, err := resultsIterator.Next()
-		if err != nil {
-			return nil, fmt.Errorf("failed to iterate query result: %v", err)
-		}
+		checkError(err)
 
 		employee := new(Employee)
 		err = json.Unmarshal(result.Value, employee)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-		}
+		checkError(err)
 
 		employees = append(employees, employee)
 	}
@@ -270,23 +247,17 @@ func (dcc *DIDChaincode) QueryAssets(ctx contractapi.TransactionContextInterface
 // DID 정보
 func (dcc *DIDChaincode) GetDID(ctx contractapi.TransactionContextInterface, id string) (*EmployeeDID, error) {
 	employeeJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read from world state: %v", err)
-	}
+	checkError(err)
 	if employeeJSON == nil {
 		return nil, fmt.Errorf("the employee %s does not exist", id)
 	}
 
 	employee := new(Employee)
 	err = json.Unmarshal(employeeJSON, employee)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal employee JSON: %v", err)
-	}
+	checkError(err)
 
-	didDocument, err := createEmployeeDID(employee.DID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get employee DID: %v", err)
-	}
+	didDocument, err := createEmployeeDIDDocument(employee.DID)
+	checkError(err)
 
 	return &didDocument, nil
 }
@@ -294,19 +265,30 @@ func (dcc *DIDChaincode) GetDID(ctx contractapi.TransactionContextInterface, id 
 func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterface, id string) (*DIDVerificationResult, error) {
 	// 사원 did document
 	employeeDID, err := dcc.GetDIDDocument(ctx, id)
-	fmt.Println(employeeDID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get employee did: %v", err)
-	}
+	checkError(err)
 
 	// 추가적인 검증 로직 수행
-	// ...
+	if len(employeeDID.PublicKey) == 0 {
+		return &DIDVerificationResult{
+			Verified: false,
+			Message:  "Employee DID does not have a public key",
+		}, nil
+	}
+
+	for _, publicKey := range employeeDID.PublicKey {
+		if publicKey.PublicKeyHex == "" {
+			return &DIDVerificationResult{
+				Verified: false,
+				Message:  "Employee DID has an invalid public key",
+			}, nil
+		}
+	}
 
 	// 검증 결과 생성
 	verified := true // 임시로 검증 결과를 true로 설정
 	result := &DIDVerificationResult{
 		Verified: verified,
-		Message: "employee verification result",
+		Message:  "employee verification result",
 	}
 
 	return result, nil
@@ -314,9 +296,7 @@ func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterf
 
 func main() {
 	didChaincode, err := contractapi.NewChaincode(&DIDChaincode{})
-	if err != nil {
-		log.Fatalf("Error creating DID chaincode: %v", err)
-	}
+	checkError(err)
 
 	if err := didChaincode.Start(); err != nil {
 		log.Fatalf("Error starting DID chaincode: %v", err)

@@ -1,51 +1,29 @@
 "use strict";
 
 const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
-const helper = require("./helper");
 
 class VerifyEmployeeWorkload extends WorkloadModuleBase {
   constructor() {
     super();
-    this.txIndex = 0;
   }
 
-  async initializeWorkloadModule(
-    workerIndex,
-    totalWorkers,
-    roundIndex,
-    roundArguments,
-    sutAdapter,
-    sutContext
-  ) {
-    await super.initializeWorkloadModule(
-      workerIndex,
-      totalWorkers,
-      roundIndex,
-      roundArguments,
-      sutAdapter,
-      sutContext
-    );
-    await helper.createGateway(sutContext);
+  // This function is called during the benchmark initialization.
+  async initializeWorkloadModule(workerIndex, totalWorkers) {
+    await super.initializeWorkloadModule(workerIndex, totalWorkers);
   }
 
+  // This function is called in each round by the worker to send transactions to the SUT.
   async submitTransaction() {
-    // generate a unique transaction id
-    this.txIndex++;
-    let employeeID = "employee_" + this.workerIndex + "_" + this.txIndex;
+    // generate unique employee ID
+    const employeeID = `emp${this.workerIndex}_${this.txIndex}`;
 
-    // Create the employee
-    await helper.contract.submitTransaction("CreateEmployee", {
-      DocType: "employee",
-      ID: employeeID,
-      DID: "",
+    await this.sutAdapter.sendRequests({
+      contractId: "DIDChaincode",
+      contractFunction: "VerifyEmployee",
+      invokerIdentity: "User1",
+      contractArguments: [employeeID],
+      readOnly: true,
     });
-
-    // Then verify the employee
-    await helper.contract.submitTransaction("VerifyEmployee", employeeID);
-  }
-
-  async cleanupWorkloadModule() {
-    await helper.disconnectGateway();
   }
 }
 
