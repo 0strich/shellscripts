@@ -5,28 +5,6 @@ test:
     type: local
     number: 2
   rounds:
-    # - label: verifyEmployee
-    #   description: Test round for verifyEmployee
-    #   chaincodeId: basic # 여기에 체인코드의 실제 ID를 입력해야 합니다.
-    #   txNumber:
-    #     - 10
-    #   rateControl:
-    #     type: fixed-rate
-    #     opts:
-    #       tps: 1500 # TPS를 1500으로 설정
-    #   arguments:
-    #     id: emp1 # 'id'가 'VerifyEmployee' 함수에 전달되는 인수입니다.
-    #   callback:
-    #     module: workload/verifyEmployee.js
-    # - label: createEmployee
-    #   description: Create Employee benchmark
-    #   txDuration: 30
-    #   rateControl:
-    #     type: fixed-load
-    #     opts:
-    #       tps: 1500
-    #   workload:
-    #     module: workload/createEmployee.js
     - label: readAsset
       description: Read asset benchmark
       txDuration: 30
@@ -39,3 +17,36 @@ test:
         arguments:
           assets: 40
           contractId: basic
+    - label: verifyEmployee
+      description: Read asset benchmark
+      txDuration: 30
+      rateControl:
+        type: fixed-load
+        opts:
+          tps: 1500
+      workload:
+        module: workload/verifyEmployee.js
+        arguments:
+          assets: 40
+          contractId: basic
+    # - label: createEmployee
+    #   description: Create Employee benchmark
+    #   txDuration: 30
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       tps: 1500
+    #   workload:
+    #     module: workload/createEmployee.js
+    # - label: readAsset
+    #   description: Read asset benchmark
+    #   txDuration: 30
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       tps: 1500
+    #   workload:
+    #     module: workload/readAsset.js
+    #     arguments:
+    #       assets: 40
+    #       contractId: basic

@@ -47,8 +47,8 @@ func checkError(err error) {
 // 원장 초기화
 func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	employees := []Employee{
-		{DocType: "employee", ID: "emp1", DID: ""},
-		{DocType: "employee", ID: "emp2", DID: ""},
+		{DocType: "employee", ID: "olive", DID: ""},
+		{DocType: "employee", ID: "austin", DID: ""},
 	}
 
 	for _, employee := range employees {
@@ -284,7 +284,7 @@ func (dcc *DIDChaincode) VerifyEmployee(ctx contractapi.TransactionContextInterf
 		}
 	}
 
-	// 검증 결과 생성
+	// 검증 결과 
 	verified := true // 임시로 검증 결과를 true로 설정
 	result := &DIDVerificationResult{
 		Verified: verified,

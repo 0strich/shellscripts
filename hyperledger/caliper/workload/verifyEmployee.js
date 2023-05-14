@@ -2,33 +2,78 @@
 
 const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
 
-class VerifyEmployeeWorkload extends WorkloadModuleBase {
+class MyWorkload extends WorkloadModuleBase {
   constructor() {
     super();
+    this.assetIds = [];
   }
 
-  // This function is called during the benchmark initialization.
-  async initializeWorkloadModule(workerIndex, totalWorkers) {
-    await super.initializeWorkloadModule(workerIndex, totalWorkers);
+  async initializeWorkloadModule(
+    workerIndex,
+    totalWorkers,
+    roundIndex,
+    roundArguments,
+    sutAdapter,
+    sutContext
+  ) {
+    await super.initializeWorkloadModule(
+      workerIndex,
+      totalWorkers,
+      roundIndex,
+      roundArguments,
+      sutAdapter,
+      sutContext
+    );
+
+    for (let i = 0; i < this.roundArguments.assets; i++) {
+      const assetID = `${this.workerIndex}_${i}`;
+      console.log("assetID: ", assetID);
+      console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
+      const request = {
+        contractId: this.roundArguments.contractId,
+        contractFunction: "CreateEmployee",
+        invokerIdentity: "User1",
+        contractArguments: ["employee", assetID],
+        readOnly: false,
+      };
+      await this.sutAdapter.sendRequests(request);
+      this.assetIds.push(assetID);
+    }
   }
 
-  // This function is called in each round by the worker to send transactions to the SUT.
   async submitTransaction() {
-    // generate unique employee ID
-    const employeeID = `emp${this.workerIndex}_${this.txIndex}`;
+    const randomId = Math.floor(Math.random() * this.roundArguments.assets);
+    const assetID = this.assetIds[randomId];
 
-    await this.sutAdapter.sendRequests({
-      contractId: "DIDChaincode",
+    const myArgs = {
+      contractId: this.roundArguments.contractId,
       contractFunction: "VerifyEmployee",
       invokerIdentity: "User1",
-      contractArguments: [employeeID],
+      contractArguments: [assetID],
       readOnly: true,
-    });
+    };
+
+    await this.sutAdapter.sendRequests(myArgs);
+  }
+
+  async cleanupWorkloadModule() {
+    for (const assetID of this.assetIds) {
+      console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
+      const request = {
+        contractId: this.roundArguments.contractId,
+        contractFunction: "DeleteEmployee",
+        invokerIdentity: "User1",
+        contractArguments: [assetID],
+        readOnly: false,
+      };
+
+      await this.sutAdapter.sendRequests(request);
+    }
   }
 }
 
 function createWorkloadModule() {
-  return new VerifyEmployeeWorkload();
+  return new MyWorkload();
 }
 
 module.exports.createWorkloadModule = createWorkloadModule;
