@@ -21,8 +21,8 @@ if [ ! -d "node_modules" ]; then
 	npx caliper bind --caliper-bind-sut fabric:2.2
 fi
 
-if [ -f "$HOME/shellscripts/hyperledger/workloads/readAsset.js" ]; then
-	cp $HOME/shellscripts/hyperledger/workloads/readAsset.js $HOME/shellscripts/hyperledger/caliper/workload/readAsset.js
+if [ -f "$HOME/shellscripts/hyperledger/workloads/readEmployee.js" ]; then
+	cp $HOME/shellscripts/hyperledger/workloads/readEmployee.js $HOME/shellscripts/hyperledger/caliper/workload/readEmployee.js
 fi
 
 # 커맨드 실행

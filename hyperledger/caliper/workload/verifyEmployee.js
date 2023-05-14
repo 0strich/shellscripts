@@ -5,7 +5,7 @@ const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
 class MyWorkload extends WorkloadModuleBase {
   constructor() {
     super();
-    this.assetIds = [];
+    this.employeeIDs = [];
   }
 
   async initializeWorkloadModule(
@@ -25,45 +25,45 @@ class MyWorkload extends WorkloadModuleBase {
       sutContext
     );
 
-    for (let i = 0; i < this.roundArguments.assets; i++) {
-      const assetID = `${this.workerIndex}_${i}`;
-      console.log("assetID: ", assetID);
-      console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
+    for (let i = 0; i < this.roundArguments.employees; i++) {
+      const employeeID = `${this.workerIndex}_${i}`;
+      console.log("employeeID: ", employeeID);
+      console.log(`Worker ${this.workerIndex}: Creating emp ${employeeID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateEmployee",
         invokerIdentity: "User1",
-        contractArguments: ["employee", assetID],
+        contractArguments: ["employee", employeeID],
         readOnly: false,
       };
       await this.sutAdapter.sendRequests(request);
-      this.assetIds.push(assetID);
+      this.employeeIDs.push(employeeID);
     }
   }
 
   async submitTransaction() {
-    const randomId = Math.floor(Math.random() * this.roundArguments.assets);
-    const assetID = this.assetIds[randomId];
+    const randomId = Math.floor(Math.random() * this.roundArguments.employees);
+    const employeeID = this.employeeIDs[randomId];
 
-    const myArgs = {
+    const args = {
       contractId: this.roundArguments.contractId,
       contractFunction: "VerifyEmployee",
       invokerIdentity: "User1",
-      contractArguments: [assetID],
+      contractArguments: [employeeID],
       readOnly: true,
     };
 
-    await this.sutAdapter.sendRequests(myArgs);
+    await this.sutAdapter.sendRequests(args);
   }
 
   async cleanupWorkloadModule() {
-    for (const assetID of this.assetIds) {
-      console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
+    for (const employeeID of this.employeeIDs) {
+      console.log(`Worker ${this.workerIndex}: Deleting emp ${employeeID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "DeleteEmployee",
         invokerIdentity: "User1",
-        contractArguments: [assetID],
+        contractArguments: [employeeID],
         readOnly: false,
       };
 

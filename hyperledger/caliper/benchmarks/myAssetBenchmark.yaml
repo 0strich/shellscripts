@@ -3,23 +3,23 @@ test:
   description: test benchmark
   workers:
     type: local
-    number: 2
+    number: 4
   rounds:
-    - label: readAsset
-      description: Read asset benchmark
-      txDuration: 30
+    - label: readEmployee
+      description: Read employee benchmark
+      txDuration: 20
       rateControl:
         type: fixed-load
         opts:
           tps: 1500
       workload:
-        module: workload/readAsset.js
+        module: workload/readEmployee.js
         arguments:
-          assets: 40
+          employees: 30
           contractId: basic
     - label: verifyEmployee
-      description: Read asset benchmark
-      txDuration: 30
+      description: Read employee benchmark
+      txDuration: 20
       rateControl:
         type: fixed-load
         opts:
@@ -27,7 +27,7 @@ test:
       workload:
         module: workload/verifyEmployee.js
         arguments:
-          assets: 40
+          employees: 30
           contractId: basic
     # - label: createEmployee
     #   description: Create Employee benchmark
@@ -38,15 +38,15 @@ test:
     #       tps: 1500
     #   workload:
     #     module: workload/createEmployee.js
-    # - label: readAsset
-    #   description: Read asset benchmark
+    # - label: readEmployee
+    #   description: Read employee benchmark
     #   txDuration: 30
     #   rateControl:
     #     type: fixed-load
     #     opts:
     #       tps: 1500
     #   workload:
-    #     module: workload/readAsset.js
+    #     module: workload/readEmployee.js
     #     arguments:
-    #       assets: 40
+    #       employees: 40
     #       contractId: basic
