@@ -80,11 +80,11 @@ function fabric_up() {
 
   # /tmp/crypt 초기화 & 업데이트
   if [ -d "/tmp/crypto" ]; then
-    sudo rm -rf /tmp/crypto/*
-    sudo cp -r ./organizations/* /tmp/crypto
+    rm -rf /tmp/crypto/*
+    cp -r ./organizations/* /tmp/crypto
   else
-    sudo mkdir /tmp/crypto
-    sudo cp -r ./organizations/* /tmp/crypto
+    mkdir /tmp/crypto
+    cp -r ./organizations/* /tmp/crypto
   fi
 
   # go-ipfs-api 설치
