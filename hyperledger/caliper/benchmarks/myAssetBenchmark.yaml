@@ -3,7 +3,7 @@ test:
   description: test benchmark
   workers:
     type: local
-    number: 6
+    number: 8
   rounds:
     - label: readEmployee
       description: Read employee benchmark
