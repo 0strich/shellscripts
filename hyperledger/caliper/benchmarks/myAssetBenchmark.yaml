@@ -3,7 +3,7 @@ test:
   description: test benchmark
   workers:
     type: local
-    number: 8
+    number: 20
   rounds:
     - label: createEmployee
       description: Create Employee benchmark
@@ -11,7 +11,7 @@ test:
       rateControl:
         type: fixed-load
         opts:
-          tps: 500
+          tps: 1000
       workload:
         module: workload/createEmployee.js
         arguments:
