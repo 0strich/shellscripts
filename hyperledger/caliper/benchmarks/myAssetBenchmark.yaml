@@ -3,7 +3,7 @@ test:
   description: test benchmark
   workers:
     type: local
-    number: 20
+    number: 8
   rounds:
     - label: createEmployee
       description: Create Employee benchmark
