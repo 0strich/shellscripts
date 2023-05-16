@@ -47,7 +47,7 @@ class MyWorkload extends WorkloadModuleBase {
 
     const myArgs = {
       contractId: this.roundArguments.contractId,
-      contractFunction: "GetEmployee",
+      contractFunction: "GetDIDDocument",
       invokerIdentity: "User1",
       contractArguments: [employeeID],
       readOnly: true,

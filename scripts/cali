@@ -22,7 +22,9 @@ if [ ! -d "node_modules" ]; then
 fi
 
 if [ -f "$HOME/shellscripts/hyperledger/workloads/readEmployee.js" ]; then
+	cp $HOME/shellscripts/hyperledger/workloads/createEmployee.js $HOME/shellscripts/hyperledger/caliper/workload/createEmployee.js
 	cp $HOME/shellscripts/hyperledger/workloads/readEmployee.js $HOME/shellscripts/hyperledger/caliper/workload/readEmployee.js
+	cp $HOME/shellscripts/hyperledger/workloads/verifyEmployee.js $HOME/shellscripts/hyperledger/caliper/workload/verifyEmployee.js
 fi
 
 # 커맨드 실행

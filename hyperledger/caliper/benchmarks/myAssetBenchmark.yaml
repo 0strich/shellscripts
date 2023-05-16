@@ -3,8 +3,19 @@ test:
   description: test benchmark
   workers:
     type: local
-    number: 9
+    number: 4
   rounds:
+    - label: createEmployee
+      description: Create Employee benchmark
+      txDuration: 30
+      rateControl:
+        type: fixed-load
+        opts:
+          tps: 500
+      workload:
+        module: workload/createEmployee.js
+        arguments:
+          contractId: basic
     - label: readEmployee
       description: Read employee benchmark
       txDuration: 20
@@ -29,24 +40,3 @@ test:
         arguments:
           employees: 30
           contractId: basic
-    # - label: createEmployee
-    #   description: Create Employee benchmark
-    #   txDuration: 30
-    #   rateControl:
-    #     type: fixed-load
-    #     opts:
-    #       tps: 1500
-    #   workload:
-    #     module: workload/createEmployee.js
-    # - label: readEmployee
-    #   description: Read employee benchmark
-    #   txDuration: 30
-    #   rateControl:
-    #     type: fixed-load
-    #     opts:
-    #       tps: 1500
-    #   workload:
-    #     module: workload/readEmployee.js
-    #     arguments:
-    #       employees: 40
-    #       contractId: basic

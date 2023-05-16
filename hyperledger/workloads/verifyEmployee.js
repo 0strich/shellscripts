@@ -33,7 +33,7 @@ class MyWorkload extends WorkloadModuleBase {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateEmployee",
         invokerIdentity: "User1",
-        contractArguments: ["employee", employeeID, ""],
+        contractArguments: ["employee", employeeID],
         readOnly: false,
       };
       await this.sutAdapter.sendRequests(request);
@@ -45,15 +45,15 @@ class MyWorkload extends WorkloadModuleBase {
     const randomId = Math.floor(Math.random() * this.roundArguments.employees);
     const employeeID = this.employeeIDs[randomId];
 
-    const myArgs = {
+    const args = {
       contractId: this.roundArguments.contractId,
-      contractFunction: "GetDIDDocument",
+      contractFunction: "VerifyEmployee",
       invokerIdentity: "User1",
       contractArguments: [employeeID],
       readOnly: true,
     };
 
-    await this.sutAdapter.sendRequests(myArgs);
+    await this.sutAdapter.sendRequests(args);
   }
 
   async cleanupWorkloadModule() {
