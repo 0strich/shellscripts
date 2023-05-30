@@ -38,6 +38,7 @@ function command() {
 		if [ "$hash" == "$current_hash" ]; then
 			echo "Deploy Complete."
 		else
+			pwd
 			echo "Npm Install..."
 			npm install
 			# docker exec -d $3 sh -c "npm install"
