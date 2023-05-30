@@ -39,7 +39,7 @@ function command() {
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
-			npm install
+			npm install &
 			# docker exec -d $3 sh -c "npm install; pkill node"
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
