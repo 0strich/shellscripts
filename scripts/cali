@@ -14,8 +14,7 @@ else
 	sed -i "s|$PRIVATE_KEY_PATH/[^/]*_sk|$NEW_FILE_PATH|g" ./networks/networkConfig.yaml
 fi
 
-if [ ! -d "node_modules" ]; then
-	# CLI 설치
+if [ ! -d "node_modules" ]; then # CLI 설치
 	npm install --only=prod @hyperledger/caliper-cli@0.4.2
 	# SDK 바인딩
 	npx caliper bind --caliper-bind-sut fabric:2.2

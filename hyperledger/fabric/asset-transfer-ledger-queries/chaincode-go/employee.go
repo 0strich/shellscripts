@@ -14,6 +14,10 @@ import (
 type Employee struct {
 	DocType string `json:"docType"`
 	ID      string `json:"id"`
+	Nation 	string `json:"nation"`
+	Birth		string `json:"birth"`
+	PhoneNumber string `json:"phoneNumber"`
+	City 		string `json:"city"`
 	DID     string `json:"did"`
 }
 
@@ -47,8 +51,8 @@ func checkError(err error) {
 // 원장 초기화
 func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	employees := []Employee{
-		{DocType: "employee", ID: "olive", DID: ""},
-		{DocType: "employee", ID: "austin", DID: ""},
+		{DocType: "employee", ID: "olive", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "austin", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
 	}
 
 	for _, employee := range employees {
@@ -83,7 +87,7 @@ func generateRandomEmployeeID() string {
 	return hex.EncodeToString(employeeIDBytes)
 }
 
-func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string) error {
+func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string, nation string, birth string, phoneNumber string, city string) error {
 	// 존재 유무 체크
 	existingData, err := ctx.GetStub().GetState(id)
 	checkError(err)
@@ -95,7 +99,10 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	employee := Employee{
 		DocType: docType,
 		ID:      id,
-		DID:     "",
+		Nation:	 nation,
+		Birth:	 birth,
+		PhoneNumber:	phoneNumber,
+		City:		 city,
 	}
 
 	// DID 생성
@@ -122,7 +129,7 @@ func (dcc *DIDChaincode) CreateEmployee(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
-func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string) error {
+func (dcc *DIDChaincode) UpdateEmployee(ctx contractapi.TransactionContextInterface, docType string, id string,nation string, birth string, phoneNumber string, city string) error {
 	existingData, err := ctx.GetStub().GetState(id)
 	checkError(err)
 	if existingData == nil {
