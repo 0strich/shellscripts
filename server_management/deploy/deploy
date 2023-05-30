@@ -39,8 +39,7 @@ function command() {
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
-			npm install &
-			# docker exec -d $3 sh -c "npm install; pkill node"
+			docker exec -d $3 sh -c "npm install &"
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
 			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
