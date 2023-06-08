@@ -5,7 +5,6 @@ services:
     container_name: project-name
     volumes:
       - .:/app:delegated
-      - /app/node_modules
     build:
       context: .
       dockerfile: Dockerfile
