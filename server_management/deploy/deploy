@@ -41,7 +41,6 @@ function command() {
 			echo "Npm Install..."
 			pwd
 			npm install
-			pm2 reload 0
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
 			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
