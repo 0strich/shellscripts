@@ -40,7 +40,7 @@ function command() {
 		else
 			echo "Npm Install..."
 			rm -rf node_modules
-			docker exec -it $3 /bin/bash -c "npm install"
+			docker exec -i $3 /bin/bash -c "npm install"
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
 			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
