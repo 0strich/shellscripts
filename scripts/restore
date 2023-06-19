@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+mongorestore --host $MONGO_HOST --port 27017 --username $MONGO_USERNAME --password $MONGO_PASSWORD $1
