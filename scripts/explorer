@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# set -e
+
+function fabric_settings() {
+  # 파일 경로
+  json_file_path="$HOME/shellscripts/hyperledger/explorer/examples/net1/connection-profile/test-network.json"
+
+  # 업데이트 내용
+  admin_private_key_path=/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore
+  update_admin_private_key_path=$admin_private_key_path/$(ls $admin_private_key_path)
+
+  signed_cert_path="/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+  update_signed_cert_path=$signed_cert_path/$(ls $signed_cert_path)
+
+  # JSON 파일 읽고 업데이트
+  update_json_file=$(jq --arg napk "$update_admin_private_key_path" --arg nscp "$update_signed_cert_path" '.organizations.Org1MSP.adminPrivateKey.path = $napk | .organizations.Org1MSP.signedCert.path = $nscp' $json_file_path)
+
+  echo "$update_json_file" >$json_file_path
+}
+
+function print_help() {
+  echo "helper"
+}
+
+# 테스트넷 환경변수 및 설정
+if [ "$1" == "up" ]; then
+  fabric_settings
+elif [ "$1" == "clean" ]; then
+  fabric_settings
+else
+  print_help
+  exit 1
+fi
