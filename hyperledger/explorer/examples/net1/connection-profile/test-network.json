@@ -35,7 +35,7 @@
         "peer0.org1.example.com"
       ],
       "signedCert": {
-        "path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/cert.pem/testign"
+        "path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/cert.pem"
       }
     }
   },

@@ -2,7 +2,10 @@
 
 # set -e
 
-function fabric_settings() {
+export EXPLORRE_PATH=$HOME/shellscripts/hyperledger/explorer
+
+# 인증키 파일 업데이트
+function update_key_files() {
   # 파일 경로
   json_file_path="$HOME/shellscripts/hyperledger/explorer/examples/net1/connection-profile/test-network.json"
 
@@ -13,21 +16,36 @@ function fabric_settings() {
   signed_cert_path="/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
   update_signed_cert_path=$signed_cert_path/$(ls $signed_cert_path)
 
-  # JSON 파일 읽고 업데이트
+  # JSON 파일 Read & Update
   update_json_file=$(jq --arg napk "$update_admin_private_key_path" --arg nscp "$update_signed_cert_path" '.organizations.Org1MSP.adminPrivateKey.path = $napk | .organizations.Org1MSP.signedCert.path = $nscp' $json_file_path)
-
   echo "$update_json_file" >$json_file_path
 }
 
+# docker-compose up
+function up() {
+  pushd $EXPLORRE_PATH
+  doc up
+  popd
+}
+
+# docker-compose down
+function down() {
+  pushd $EXPLORRE_PATH
+  doc down
+  popd
+}
+
+# 도움말
 function print_help() {
   echo "helper"
 }
 
 # 테스트넷 환경변수 및 설정
 if [ "$1" == "up" ]; then
-  fabric_settings
-elif [ "$1" == "clean" ]; then
-  fabric_settings
+  update_key_files
+  up
+elif [ "$1" == "down" ]; then
+  down
 else
   print_help
   exit 1
