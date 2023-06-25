@@ -1,21 +1,18 @@
 name: Calier test
 version: "2.0.0"
-
 caliper:
   blockchain: fabric
-
 channels:
   - channelName: mychannel
     contracts:
       - id: basic
-
 organizations:
   - mspid: Org1MSP
     identities:
       certificates:
         - name: "User1"
           clientPrivateKey:
-            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/f5a20dfb47ca73a784a23f9cd03bca9472cb00834f0cee3b41149a81310d7fda_sk"
+            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/d334d6f2cea8f4dd13b96d78f38cbc38cf7bf38e0a05af613b42ee6ba1d0cb05_sk"
           clientSignedCert:
             path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem"
     connectionProfile:
