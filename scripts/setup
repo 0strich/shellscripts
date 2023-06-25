@@ -31,6 +31,7 @@ function usage() {
 	echo "  -if, --ipfs Install IPFS"
 	echo "  -dn, --docker_node Copy Docker files and mondify"
 	echo "  -dr, --docker_react Copy Docker files and mondify"
+	echo "  -ssh, ssh setup"
 }
 
 # Parse options
