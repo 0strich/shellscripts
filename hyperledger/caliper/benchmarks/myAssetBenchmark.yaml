@@ -7,7 +7,7 @@ test:
   rounds:
     # - label: createEmployee
     #   description: Create Employee benchmark
-    #   txDuration: 20
+    #   txDuration: 100
     #   rateControl:
     #     type: fixed-load
     #     opts:
@@ -18,7 +18,7 @@ test:
     #       contractId: basic
     - label: readEmployee
       description: Read employee benchmark
-      txDuration: 15
+      txDuration: 25
       rateControl:
         type: fixed-load
         opts:
