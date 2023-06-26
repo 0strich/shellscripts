@@ -39,9 +39,9 @@ class CreateEmployeeWorkload extends WorkloadModuleBase {
       contractArguments: [
         "employee",
         employeeID,
-        "korea",
+        "Korea",
         "19930621",
-        "010-2499-8196",
+        "01024998196",
         "Seoul",
       ],
       readOnly: false,

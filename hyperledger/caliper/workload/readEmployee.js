@@ -28,7 +28,6 @@ class MyWorkload extends WorkloadModuleBase {
     for (let i = 0; i < this.roundArguments.employees; i++) {
       const employeeID = `READ_KEY_${this.workerIndex}_${i}`;
       console.log("employeeID: ", employeeID);
-      console.log(`Worker ${this.workerIndex}: Creating emp ${employeeID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateEmployee",
@@ -36,9 +35,9 @@ class MyWorkload extends WorkloadModuleBase {
         contractArguments: [
           "employee",
           employeeID,
-          "korea",
+          "Korea",
           "19930621",
-          "010-2499-8196",
+          "01024998196",
           "Seoul",
         ],
         readOnly: false,
