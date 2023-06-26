@@ -30,7 +30,7 @@ class CreateEmployeeWorkload extends WorkloadModuleBase {
 
   async submitTransaction() {
     this.txIndex++;
-    const employeeID = `EMP${this.workerIndex}_${this.txIndex}`;
+    const employeeID = `CREATE_KEY_${this.workerIndex}_${this.txIndex}`;
     this.employeeIDs.push(employeeID);
     const request = {
       contractId: this.roundArguments.contractId,

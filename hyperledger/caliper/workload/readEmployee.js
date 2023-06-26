@@ -26,7 +26,7 @@ class MyWorkload extends WorkloadModuleBase {
     );
 
     for (let i = 0; i < this.roundArguments.employees; i++) {
-      const employeeID = `${this.workerIndex}_${i}`;
+      const employeeID = `READ_KEY_${this.workerIndex}_${i}`;
       console.log("employeeID: ", employeeID);
       console.log(`Worker ${this.workerIndex}: Creating emp ${employeeID}`);
       const request = {
