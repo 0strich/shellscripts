@@ -1,0 +1,18 @@
+test:
+  name: basic-contract-benchmark
+  description: test benchmark
+  workers:
+    type: local
+    number: 8
+  rounds:
+    - label: createEmployee
+      description: Create Employee benchmark
+      txDuration: 100
+      rateControl:
+        type: fixed-load
+        opts:
+          tps: 1
+      workload:
+        module: workload/createEmployee.js
+        arguments:
+          contractId: basic
