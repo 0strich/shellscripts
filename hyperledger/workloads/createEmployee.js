@@ -30,13 +30,20 @@ class CreateEmployeeWorkload extends WorkloadModuleBase {
 
   async submitTransaction() {
     this.txIndex++;
-    const employeeID = `EMP${this.workerIndex}_${this.txIndex}`;
+    const employeeID = `CREATE_KEY_${this.workerIndex}_${this.txIndex}`;
     this.employeeIDs.push(employeeID);
     const request = {
       contractId: this.roundArguments.contractId,
       contractFunction: "CreateEmployee",
       invokerIdentity: "User1",
-      contractArguments: ["employee", employeeID, "", "", "", "", ""],
+      contractArguments: [
+        "employee",
+        employeeID,
+        "Korea",
+        "19930621",
+        "01024998196",
+        "Seoul",
+      ],
       readOnly: false,
     };
     await this.sutAdapter.sendRequests(request);

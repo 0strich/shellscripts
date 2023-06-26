@@ -26,14 +26,20 @@ class MyWorkload extends WorkloadModuleBase {
     );
 
     for (let i = 0; i < this.roundArguments.employees; i++) {
-      const employeeID = `${this.workerIndex}_${i}`;
+      const employeeID = `VERIFY_KEY_${this.workerIndex}_${i}`;
       console.log("employeeID: ", employeeID);
-      console.log(`Worker ${this.workerIndex}: Creating emp ${employeeID}`);
       const request = {
         contractId: this.roundArguments.contractId,
         contractFunction: "CreateEmployee",
         invokerIdentity: "User1",
-        contractArguments: ["employee", employeeID, "", "", "", "", ""],
+        contractArguments: [
+          "employee",
+          employeeID,
+          "Korea",
+          "19930621",
+          "01024998196",
+          "Seoul",
+        ],
         readOnly: false,
       };
       await this.sutAdapter.sendRequests(request);
