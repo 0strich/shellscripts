@@ -18,7 +18,7 @@ test:
     #       contractId: basic
     - label: readEmployee
       description: Read employee benchmark
-      txDuration: 20
+      txDuration: 15
       rateControl:
         type: fixed-load
         opts:
