@@ -7,7 +7,7 @@ test:
   rounds:
     - label: createEmployee
       description: Create Employee benchmark
-      txDuration: 100
+      txDuration: 18
       rateControl:
         type: fixed-load
         opts:
