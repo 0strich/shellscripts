@@ -1,6 +1,9 @@
 "use strict";
 
 const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
+const Logger = require("@hyperledger/caliper-core").CaliperUtils.getLogger(
+  "my-workload.js"
+);
 
 class CreateEmployeeWorkload extends WorkloadModuleBase {
   constructor() {
@@ -31,6 +34,7 @@ class CreateEmployeeWorkload extends WorkloadModuleBase {
   async submitTransaction() {
     this.txIndex++;
     const employeeID = `CREATE_KEY_${this.workerIndex}_${this.txIndex}`;
+    Logger.info(`Creating employeeID: ${employeeID}`);
     this.employeeIDs.push(employeeID);
     const request = {
       contractId: this.roundArguments.contractId,
@@ -51,6 +55,7 @@ class CreateEmployeeWorkload extends WorkloadModuleBase {
 
   async cleanupWorkloadModule() {
     for (const employeeID of this.employeeIDs) {
+      Logger.info(`Deleting employeeID: ${employeeID}`);
       console.log(`Worker ${this.workerIndex}: Deleting emp ${employeeID}`);
       const request = {
         contractId: this.roundArguments.contractId,

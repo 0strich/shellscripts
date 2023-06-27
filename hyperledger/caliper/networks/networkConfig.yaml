@@ -2,6 +2,9 @@ name: Calier test
 version: "2.0.0"
 caliper:
   blockchain: fabric
+command:
+  start:
+    loglevel: info
 channels:
   - channelName: mychannel
     contracts:
@@ -12,7 +15,7 @@ organizations:
       certificates:
         - name: "User1"
           clientPrivateKey:
-            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/d334d6f2cea8f4dd13b96d78f38cbc38cf7bf38e0a05af613b42ee6ba1d0cb05_sk"
+            path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/ca2bbf757aa8f89fd68b93e0c2b04d275fa929fa858cc50e74189c7684ab8d25_sk"
           clientSignedCert:
             path: "/tmp/crypto/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem"
     connectionProfile:
