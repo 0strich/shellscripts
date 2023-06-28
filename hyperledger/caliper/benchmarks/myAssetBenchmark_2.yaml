@@ -5,18 +5,18 @@ test:
     type: local
     number: 8
   rounds:
-    - label: readEmployee
-      description: Read employee benchmark
-      txDuration: 25
-      rateControl:
-        type: fixed-load
-        opts:
-          tps: 1500
-      workload:
-        module: workload/readEmployee.js
-        arguments:
-          employees: 30
-          contractId: basic
+    # - label: readEmployee
+    #   description: Read employee benchmark
+    #   txDuration: 25
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       tps: 1500
+    #   workload:
+    #     module: workload/readEmployee.js
+    #     arguments:
+    #       employees: 30
+    #       contractId: basic
     - label: verifyEmployee
       description: Read employee benchmark
       txDuration: 20

@@ -53,6 +53,14 @@ func (dcc *DIDChaincode) InitLedger(ctx contractapi.TransactionContextInterface)
 	employees := []Employee{
 		{DocType: "employee", ID: "olive", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
 		{DocType: "employee", ID: "austin", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "elena", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "sancho", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "anne", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "jason", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "gorden", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "jade", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "wake", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
+		{DocType: "employee", ID: "aiden", Nation: "Korea", Birth: "930621", PhoneNumber:"010-2499-8196", City: "Seoul", DID: ""},
 	}
 
 	for _, employee := range employees {
