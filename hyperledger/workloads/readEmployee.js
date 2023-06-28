@@ -66,21 +66,21 @@ class MyWorkload extends WorkloadModuleBase {
     await this.sutAdapter.sendRequests(myArgs);
   }
 
-  async cleanupWorkloadModule() {
-    for (const employeeID of this.employeeIDs) {
-      Logger.info(`Deleting employeeID: ${employeeID}`);
-      console.log(`Worker ${this.workerIndex}: Deleting emp ${employeeID}`);
-      const request = {
-        contractId: this.roundArguments.contractId,
-        contractFunction: "DeleteEmployee",
-        invokerIdentity: "User1",
-        contractArguments: [employeeID],
-        readOnly: false,
-      };
+  // async cleanupWorkloadModule() {
+  //   for (const employeeID of this.employeeIDs) {
+  //     Logger.info(`Deleting employeeID: ${employeeID}`);
+  //     console.log(`Worker ${this.workerIndex}: Deleting emp ${employeeID}`);
+  //     const request = {
+  //       contractId: this.roundArguments.contractId,
+  //       contractFunction: "DeleteEmployee",
+  //       invokerIdentity: "User1",
+  //       contractArguments: [employeeID],
+  //       readOnly: false,
+  //     };
 
-      await this.sutAdapter.sendRequests(request);
-    }
-  }
+  //     await this.sutAdapter.sendRequests(request);
+  //   }
+  // }
 }
 
 function createWorkloadModule() {
