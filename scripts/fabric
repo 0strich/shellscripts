@@ -148,8 +148,8 @@ function get_assets() {
   # 조회(Couch DB)
   # peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"asset\"}, \"use_index\":[\"_design/indexDocType\", \"indexDocDype\"]}"]}'
   # peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"employee\"}i \"use_index\":[\"_design/indexID\", \"indexIDu\"]}"]}'
-  peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"id\":\"austin\"}}"]}'
-  peer chaincode query -C mychannel -n basic -c '{"function":"GetDIDDocument","Args":["austin"]}'
+  peer chaincode query -C mychannel -n basic -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"employee\"}}"]}'
+  # peer chaincode query -C mychannel -n basic -c '{"function":"GetDIDDocument","Args":["austin"]}'
   # 생성
   # peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"CreateEmployee","Args":["employee", "emp3 "]}'
 
