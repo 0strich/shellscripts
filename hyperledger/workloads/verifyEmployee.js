@@ -63,6 +63,8 @@ class MyWorkload extends WorkloadModuleBase {
       readOnly: true,
     };
 
+    Logger.info(`Verifying Success employeeID: ${employeeID}`);
+
     await this.sutAdapter.sendRequests(args);
   }
 
