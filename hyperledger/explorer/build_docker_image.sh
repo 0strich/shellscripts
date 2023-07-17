@@ -5,7 +5,7 @@
 FABRIC_EXPLORER_DB_TAG="hyperledger/explorer-db"
 FABRIC_EXPLORER_TAG="hyperledger/explorer"
 
-function banner(){
+function banner() {
 	echo ""
 	echo "  _    _                       _          _                   ______            _                     "
 	echo " | |  | |                     | |        | |                 |  ____|          | |                    "
@@ -18,12 +18,12 @@ function banner(){
 	echo ""
 }
 
-function deploy_build_database(){
+function deploy_build_database() {
 	echo "Building Hyperledger Fabric Database image..."
 	docker build --build-arg "http_proxy=${http_proxy}" --build-arg "https_proxy=${https_proxy}" --build-arg "no_proxy=${no_proxy}" -f postgres-Dockerfile --tag $FABRIC_EXPLORER_DB_TAG .
 }
 
-function deploy_build_explorer(){
+function deploy_build_explorer() {
 	echo "Building Hyperledger Fabric explorer image..."
 	docker build --build-arg "http_proxy=${http_proxy}" --build-arg "https_proxy=${https_proxy}" --build-arg "no_proxy=${no_proxy}" --tag $FABRIC_EXPLORER_TAG .
 }
@@ -35,18 +35,18 @@ build_explorer=0
 build_all=1
 
 while getopts "de" opt; do
-  case "$opt" in
-  d)
-    echo "Build DB images"
-    build_db=1
+	case "$opt" in
+	d)
+		echo "Build DB images"
+		build_db=1
 		build_all=0
-    ;;
-  e)
-    echo "Build Explorer images"
-    build_explorer=1
+		;;
+	e)
+		echo "Build Explorer images"
+		build_explorer=1
 		build_all=0
-    ;;
-  esac
+		;;
+	esac
 done
 
 if [ $build_all -eq 1 ]; then

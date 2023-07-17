@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+BACKUP_PATH=/Users/patric/Programming/01_saltmine/backup/production
+TODAY=$(date "+%Y-%m-%d")
+
+cd $BACKUP_PATH
+
+if [ -d $TODAY ]; then
+	cd $BACKUP_PATH/$TODAY
+	dump saltmine_"$(ls | wc -l | tr -d '[:space:]')"
+else
+	mkdir $TODAY
+	cd $TODAY
+	dump saltmine_"$(ls | wc -l | tr -d '[:space:]')"
+fi
+
+exit
