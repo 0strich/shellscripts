@@ -26,11 +26,11 @@ function clone_nginx() {
 	create_project_directory
 	create_docker
 	if [ ! -d "/project/nginx" ]; then
-		cp -r /dockers/nginx /project/nginx
+		git clone https://github.com/0strich/nginx.git
 	fi
 }
 
-# mongobd clone
+mongobd clone
 function clone_mongodb() {
 	create_project_directory
 	create_docker
