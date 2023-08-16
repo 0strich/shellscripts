@@ -30,9 +30,9 @@ function clone_nginx() {
 	fi
 }
 
-mongobd clone
+# mongodb clone
 function clone_mongodb() {
-	create_project_directory
+	create_project_director
 	create_docker
 	if [ ! -d "/project/mongodb" ]; then
 		cp -r /dockers/mongodb /project/mongodb
