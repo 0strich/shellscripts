@@ -26,7 +26,12 @@ function clone_nginx() {
 	create_project_directory
 	create_docker
 	if [ ! -d "/project/nginx" ]; then
+		pushd /project
 		git clone https://github.com/0strich/nginx.git
+		pushd nginx
+		cp .env.sample .env
+		popd
+		popd
 	fi
 }
 
