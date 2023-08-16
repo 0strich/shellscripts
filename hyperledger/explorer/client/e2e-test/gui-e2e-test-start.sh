@@ -17,7 +17,7 @@ echo "#### Downloaded fabric-test repo"
 
 if [ $# -eq 0 ]; then
   echo "$0 [-1 | -2]"
-  exit 1;
+  exit 1
 fi
 
 while getopts "12" opt; do
@@ -43,7 +43,7 @@ while getopts "12" opt; do
     ;;
   *)
     echo "$0 [-1 | -2]"
-    exit 1;
+    exit 1
     ;;
   esac
 done
@@ -96,7 +96,7 @@ echo "#### Starting selenium containers & explorer-db container ..."
 rc=1
 starttime=$(date +%s)
 while
-  [[ "$(($(date +%s) - starttime))" -lt "$TIMEOUT" ]] && [[ $rc -ne 0 ]];
+  [[ "$(($(date +%s) - starttime))" -lt "$TIMEOUT" ]] && [[ $rc -ne 0 ]]
 do
   sleep $DELAY
   set -x +e
