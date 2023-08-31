@@ -42,6 +42,7 @@ function command() {
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
+			rm -rf package-lock.json
 			docker exec -i $3 /bin/bash -c "npm install"
 			docker exec -i $3 /bin/bash -c "npm run build"
 			echo "Npm Install Complete."
