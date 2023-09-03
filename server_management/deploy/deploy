@@ -23,7 +23,7 @@ function command() {
 	pushd "/project/$2/$3"
 
 	# 업데이트 소스 pull
-	rm -rf package-lock.json
+	# rm -rf package-lock.json
 	git pull
 
 	# package.json version 제외한 해시 비교(추가/변경 모듈 확인)
