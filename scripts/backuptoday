@@ -2,18 +2,60 @@
 
 set -e
 
-BACKUP_PATH=/Users/patric/Programming/01_saltmine/backup/production
-TODAY=$(date "+%Y-%m-%d")
+function dump() {
+	local PROJECT=$1
+	local OUT_PATH=$2
 
-cd $BACKUP_PATH
+	case $PROJECT in
+	saltmine)
+		MONGO_HOST=$SALTMINE_MONGO_HOST
+		MONGO_USERNAME=$SALTMINE_MONGO_USERNAME
+		MONGO_PASSWORD=$SALTMINE_MONGO_PASSWORD
+		;;
+	vendor)
+		MONGO_HOST=$VENDOR_MONGO_HOST
+		MONGO_USERNAME=$VENDOR_MONGO_USERNAME
+		MONGO_PASSWORD=$VENDOR_MONGO_PASSWORD
+		;;
+	develop)
+		MONGO_HOST=$DEVELOP_MONGO_HOST
+		MONGO_USERNAME=$DEVELOP_MONGO_USERNAME
+		MONGO_PASSWORD=$DEVELOP_MONGO_PASSWORD
+		;;
+	ilharu)
+		MONGO_HOST=$ILHARU_MONGO_HOST
+		MONGO_USERNAME=$ILHARU_MONGO_USERNAME
+		MONGO_PASSWORD=$ILHARU_MONGO_PASSWORD
+		;;
+	tria)
+		MONGO_HOST=$TRIA_MONGO_HOST
+		MONGO_USERNAME=$TRIA_MONGO_USERNAME
+		MONGO_PASSWORD=$TRIA_MONGO_PASSWORD
+		;;
+	*)
+		echo "Please provide a project name (saltmine, vendor, develop, ilharu, tria)."
+		exit 1
+		;;
+	esac
 
-if [ -d $TODAY ]; then
-	cd $BACKUP_PATH/$TODAY
-	dump saltmine_"$(ls | wc -l | tr -d '[:space:]')"
-else
-	mkdir $TODAY
-	cd $TODAY
-	dump saltmine_"$(ls | wc -l | tr -d '[:space:]')"
+	echo "Dumping $PROJECT to $OUT_PATH"
+	mongodump --host $MONGO_HOST --port 27017 --username $MONGO_USERNAME --password $MONGO_PASSWORD --out $OUT_PATH
+}
+
+PROJECT=$1
+
+if [[ -z "$PROJECT" ]]; then
+	echo "Please provide a project name (saltmine, vendor, develop, ilhau, tria)."
+	exit 1
 fi
+
+BASE_PATH="/Users/patric/Programming/backup"
+TODAY=$(date "+%Y-%m-%d")
+BACKUP_PATH="$BASE_PATH/$PROJECT/$TODAY"
+
+# 만약 해당 날짜의 디렉토리가 없다면 생성
+[ ! -d $BACKUP_PATH ] && mkdir -p $BACKUP_PATH
+
+dump $PROJECT $BACKUP_PATH
 
 exit
