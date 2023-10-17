@@ -2,11 +2,18 @@
 
 set -e
 
+# Load the environment variables from .env file
 source /project/mongodb/.env
 
-BACKUP_DIR="/var/backups/mongodb"
+# Define backup directories for the container and the host
+CONTAINER_BACKUP_DIR="/var/backups/mongodb"
+HOST_BACKUP_DIR="/local/host/backup/path"
 DATE=$(date +"%Y%m%d")
 
-docker exec mongodb mongodump --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --out $BACKUP_DIR/$DATE
+# Execute the backup command inside the MongoDB container
+docker exec mongodb mongodump --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --out $CONTAINER_BACKUP_DIR/$DATE
+
+# Copy the backup data from the container to the host
+docker cp mongodb:$CONTAINER_BACKUP_DIR/$DATE $HOST_BACKUP_DIR/$DATE
 
 exit
