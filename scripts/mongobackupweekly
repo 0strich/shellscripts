@@ -7,7 +7,7 @@ source /project/mongodb/.env
 
 # Define backup directories for the container and the host
 CONTAINER_BACKUP_DIR="/var/backups/mongodb"
-HOST_BACKUP_DIR="/local/host/backup/path"
+HOST_BACKUP_DIR="/var/backups/mongodb"
 DATE=$(date +"%Y%m%d")
 
 # Execute the backup command inside the MongoDB container
