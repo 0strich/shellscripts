@@ -1,1 +1,1 @@
-* * * * * ~/shesllscripts/scripts/mongobackupweekly
+0 2 * * 7 ~/shellscripts/scripts/mongobackupweekly
