@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+function losf() {
+	command lsof -i:$1
+}
+
+function kill_all_process() {
+	command lsof -i:$1 | awk 'NR>1 {print $2}' | xargs kill -9
+}
+
+if [ -z "$1" ]; then
+	echo "Usage: $0 <port>"
+	exit 1
+fi
+
+losf $1
+
+if [ "$2" == "-k" ]; then
+	kill_all_process $1
+fi
+
+exit
