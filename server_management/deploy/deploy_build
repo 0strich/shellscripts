@@ -2,10 +2,10 @@
 set -e
 
 # Default values for options
-export PROJECT_PATH=/project
-# export 1=$2
-# export 2=$3
 export DEPLOY_PROJECT=false
+export PROJECT_HOST=$1
+export PROJECT_PATH=$2
+export PROJECT_NAME=$3
 
 # Usage information
 function usage() {
@@ -16,13 +16,10 @@ function usage() {
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
-	echo "Deploying $2..."
-	echo "$2"
+	echo "Deploying $PROJECT_NAME..."
 
-	# 프로젝트 경로 이동
-	pushd "/project/$2/$3"
+	pushd $PROJECT_PATH
 
-	# 업데이트 소스 pull
 	rm -rf package-lock.json
 	git pull
 

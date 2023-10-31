@@ -2,10 +2,10 @@
 set -e
 
 # Default values for options
-export PROJECT_PATH=/project
-# export 1=$2
-# export 2=$3
 export DEPLOY_PROJECT=false
+export PROJECT_HOST=$1
+export PROJECT_PATH=$2
+export PROJECT_NAME=$3
 
 # Usage information
 function usage() {
@@ -16,14 +16,12 @@ function usage() {
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
-	echo "Deploying $2..."
-	echo "$2"
+	echo "Deploying $PROJECT_NAME..."
 
-	# 프로젝트 경로 이동
-	pushd "/project/$2/$3"
+	pushd $PROJECT_PATH
 
-	# 업데이트 소스 pull
-	# rm -rf package-lock.json
+	container_name=$(grep "container_name:" docker-compose.yml | awk '{print $2}')
+
 	git pull
 
 	# package.json version 제외한 해시 비교(추가/변경 모듈 확인)
@@ -40,7 +38,7 @@ function command() {
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
-			docker exec -i $3 /bin/bash -c "npm install"
+			docker exec -i $container_name /bin/bash -c "npm install"
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
 			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
@@ -73,8 +71,8 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh $1 "$(typeset -f command); command \"$1\" \"$2\" \"$3\""
-	echo "Deploying $2 Complete."
+	ssh $PROJECT_HOST "$(typeset -f command); command"
+	echo "Deploying $PROJECT_NAME Complete."
 fi
 
 # Final message
