@@ -87,3 +87,4 @@ fi
 
 # Final message
 echo "Deploy Success."
+echo "Deploy Success."
