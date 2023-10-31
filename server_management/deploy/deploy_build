@@ -3,9 +3,9 @@ set -e
 
 # Default values for options
 export DEPLOY_PROJECT=false
-export PROJECT_HOST=$1
-export PROJECT_PATH=$2
-export PROJECT_NAME=$3
+export PROJECT_HOST=$2
+export PROJECT_PATH=$3
+export PROJECT_NAME=$4
 
 # Usage information
 function usage() {
@@ -19,6 +19,8 @@ function command() {
 	echo "Deploying $PROJECT_NAME..."
 
 	pushd $PROJECT_PATH
+
+	container_name=$(grep "container_name:" docker-compose.yml | awk '{print $2}')
 
 	rm -rf package-lock.json
 	git pull
@@ -35,13 +37,13 @@ function command() {
 		# 저장된 해시값과 현재 파일의 해시값 비교(다를경우 npm install)
 		if [ "$hash" == "$current_hash" ]; then
 			echo "Npm Build..."
-			docker exec -i $3 /bin/bash -c "npm run build"
+			docker exec -i $container_name /bin/bash -c "npm run build"
 			echo "Npm Build Complete."
 			echo "Deploy Complete."
 		else
 			echo "Npm Install..."
-			docker exec -i $3 /bin/bash -c "npm install"
-			docker exec -i $3 /bin/bash -c "npm run build"
+			docker exec -i $container_name /bin/bash -c "npm install"
+			docker exec -i $container_name /bin/bash -c "npm run build"
 			echo "Npm Install Complete."
 			# 새로운 해시값으로 갱신
 			cat package.json | jq 'del(.version)' | sha256sum | cut -d ' ' -f 1 | sed 's/\(.*\)/{"hash": "\1"}/' >hash.json
@@ -74,8 +76,13 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh $1 "$(typeset -f command); command \"$1\" \"$2\" \"$3\""
-	echo "Deploying $2 Complete."
+	ssh $PROJECT_HOST "
+		PROJECT_HOST='$PROJECT_HOST';
+		PROJECT_PATH='$PROJECT_PATH';
+		PROJECT_NAME='$PROJECT_NAME';
+		$(typeset -f command); 
+		command"
+	echo "Deploying $PROJECT_NAME Complete."
 fi
 
 # Final message

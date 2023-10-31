@@ -16,12 +16,7 @@ function usage() {
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
-	ls -al
 	echo "Deploying $PROJECT_NAME..."
-
-	echo "HOST $PROJECT_HOST"
-	echo "PATH $PROJECT_PATH"
-	echo "NAME $PROJECT_NAME"
 
 	pushd $PROJECT_PATH
 
@@ -76,7 +71,6 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	# ssh $PROJECT_HOST "$(typeset -f command); command \"$PROJECT_HOST\" \"$PROJECT_PATH\" \"$PROJECT_NAME\""
 	ssh $PROJECT_HOST "
 		PROJECT_HOST='$PROJECT_HOST';
 		PROJECT_PATH='$PROJECT_PATH';
