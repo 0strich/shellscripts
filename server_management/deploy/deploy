@@ -71,7 +71,7 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh $PROJECT_HOST "$(typeset -f command); command"
+	ssh $PROJECT_HOST "$(typeset -f command); PROJECT_NAME=$PROJECT_NAME PROJECT_PATH=$PROJECT_PATH command"
 	echo "Deploying $PROJECT_NAME Complete."
 fi
 
