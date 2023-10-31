@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-echo 'test'
-
 # Default values for options
 export DEPLOY_PROJECT=false
 export PROJECT_HOST=$2
