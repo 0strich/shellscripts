@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo 'test'
+
 # Default values for options
 export DEPLOY_PROJECT=false
 export PROJECT_HOST=$1
@@ -79,7 +81,7 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh $PROJECT_HOST "$(typeset -f command); PROJECT_NAME=$PROJECT_NAME PROJECT_PATH=$PROJECT_PATH command"
+	ssh $PROJECT_HOST "PROJECT_NAME='$PROJECT_NAME' PROJECT_PATH='$PROJECT_PATH' $(typeset -f command); command"
 	echo "Deploying $PROJECT_NAME Complete."
 fi
 
