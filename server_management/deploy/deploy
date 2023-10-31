@@ -9,9 +9,9 @@ export PROJECT_HOST=$1
 export PROJECT_PATH=$2
 export PROJECT_NAME=$3
 
-echo $PROJECT_HOST
-echo $PROJECT_PATH
-echo $PROJECT_NAME
+echo "HOST $PROJECT_HOST"
+echo "PATH $PROJECT_PATH"
+echo "NAME $PROJECT_NAME"
 
 # Usage information
 function usage() {
@@ -22,9 +22,9 @@ function usage() {
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
-	echo $PROJECT_HOST
-	echo $PROJECT_PATH
-	echo $PROJECT_NAME
+	echo "HOST $PROJECT_HOST"
+	echo "PATH $PROJECT_PATH"
+	echo "NAME $PROJECT_NAME"
 
 	echo "Deploying $PROJECT_NAME..."
 
