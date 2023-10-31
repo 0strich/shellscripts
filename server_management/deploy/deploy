@@ -18,6 +18,7 @@ function usage() {
 
 # 배포 서버에서 프로젝트 서버 접속 및 배포
 function command() {
+	ls -al
 	echo "Deploying $PROJECT_NAME..."
 
 	echo "HOST $PROJECT_HOST"
