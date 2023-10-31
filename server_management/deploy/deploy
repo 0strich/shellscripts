@@ -78,7 +78,12 @@ shift $((OPTIND - 1))
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
 	# ssh $PROJECT_HOST "$(typeset -f command); command \"$PROJECT_HOST\" \"$PROJECT_PATH\" \"$PROJECT_NAME\""
-	ssh $PROJECT_HOST "export PROJECT_HOST='$PROJECT_HOST'; export PROJECT_PATH='$PROJECT_PATH'; export PROJECT_NAME='$PROJECT_NAME'; $(typeset -f command); command"
+	ssh $PROJECT_HOST "
+		PROJECT_HOST='$PROJECT_HOST';
+		PROJECT_PATH='$PROJECT_PATH';
+		PROJECT_NAME='$PROJECT_NAME';
+		$(typeset -f command); 
+		command"
 	echo "Deploying $PROJECT_NAME Complete."
 fi
 
