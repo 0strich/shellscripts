@@ -9,10 +9,6 @@ export PROJECT_HOST=$2
 export PROJECT_PATH=$3
 export PROJECT_NAME=$4
 
-echo "HOST $PROJECT_HOST"
-echo "PATH $PROJECT_PATH"
-echo "NAME $PROJECT_NAME"
-
 # Usage information
 function usage() {
 	echo "Usage: $0 [-n]"
@@ -77,7 +73,7 @@ shift $((OPTIND - 1))
 
 # 프로젝트 배포
 if $DEPLOY_PROJECT; then
-	ssh $PROJECT_HOST "PROJECT_NAME='$PROJECT_NAME' PROJECT_PATH='$PROJECT_PATH' $(typeset -f command); command"
+	ssh $1 "$(typeset -f command); command"
 	echo "Deploying $PROJECT_NAME Complete."
 fi
 
