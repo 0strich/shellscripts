@@ -20,6 +20,10 @@ function usage() {
 function command() {
 	echo "Deploying $PROJECT_NAME..."
 
+	echo "HOST $PROJECT_HOST"
+	echo "PATH $PROJECT_PATH"
+	echo "NAME $PROJECT_NAME"
+
 	pushd $PROJECT_PATH
 
 	container_name=$(grep "container_name:" docker-compose.yml | awk '{print $2}')
