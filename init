@@ -6,4 +6,4 @@ MY_PATH=$(dirname $(readlink -f $0))
 echo "export PATH=\$PATH:$MY_PATH/scripts" >>~/.bashrc
 echo "export PATH=\$PATH:/usr/local/go/bin" >>~/.bashrc
 
-cp ./runtime_configuration ~
+cp ./runtime_configuration/.vimrc ~
