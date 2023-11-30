@@ -18,9 +18,9 @@ while true; do
     vi ~/.ssh/authorized_keys
     shift
     ;;
-  -b | --optionB)
-    echo "Option B, argument '$2'"
-    shift 2
+  -m | --move)
+    cd ~/.ssh
+    shift
     ;;
   *)
     echo "Unknown option: $1"
