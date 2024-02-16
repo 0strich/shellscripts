@@ -13,6 +13,12 @@ function dump() {
 		MONGO_USERNAME=$SALTMINE_MONGO_USERNAME
 		MONGO_PASSWORD=$SALTMINE_MONGO_PASSWORD
 		;;
+	modoomanager)
+		MONGO_HOST=$MODOOMANAGER_MONGO_HOST
+		MONGO_PORT=$MODOOMANAGER_MONGO_PORT
+		MONGO_USERNAME=$MODOOMANAGER_MONGO_USERNAME
+		MONGO_PASSWORD=$MODOOMANAGER_MONGO_PASSWORD
+		;;
 	ilharu)
 		MONGO_HOST=$ILHARU_MONGO_HOST
 		MONGO_PORT=$ILHARU_MONGO_PORT
@@ -32,19 +38,23 @@ function dump() {
 		MONGO_PASSWORD=$AUSTIN_MONGO_PASSWORD
 		;;
 	*)
-		echo "Please provide a project name (saltmine, vendor, develop, ilharu, tria)."
+		echo "Please provide a project name (saltmine, modoomanager, vendor, develop, ilharu, tria)."
 		exit 1
 		;;
 	esac
 
 	echo "Dumping $PROJECT to $OUT_PATH"
+	echo "Dumping $MONGO_HOST"
+	echo "Dumping $MONGO_PORT"
+	echo "Dumping $MONGO_USERNAME"
+	echo "Dumping $MONGO_PASSWORD"
 	mongodump --host $MONGO_HOST --port $MONGO_PORT --username $MONGO_USERNAME --password $MONGO_PASSWORD --out $OUT_PATH
 }
 
 PROJECT=$1
 
 if [[ -z "$PROJECT" ]]; then
-	echo "Please provide a project name (saltmine, vendor, develop, ilhau, tria)."
+	echo "Please provide a project name (saltmine, modoomanager, vendor, develop, ilhau, tria)."
 	exit 1
 fi
 
