@@ -43,11 +43,6 @@ function dump() {
 		;;
 	esac
 
-	echo "Dumping $PROJECT to $OUT_PATH"
-	echo "Dumping $MONGO_HOST"
-	echo "Dumping $MONGO_PORT"
-	echo "Dumping $MONGO_USERNAME"
-	echo "Dumping $MONGO_PASSWORD"
 	mongodump --host $MONGO_HOST --port $MONGO_PORT --username $MONGO_USERNAME --password $MONGO_PASSWORD --out $OUT_PATH
 }
 
